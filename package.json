@@ -1,0 +1,33 @@
+{
+  "name": "my-admin",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "antd": "^2.11.2",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
+    "react-router": "^4.1.1",
+    "redux": "^3.7.1",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.2.0",
+    "superagent": "^3.5.2",
+    "thunk": "0.0.1"
+  },
+  "devDependencies": {
+    "react-scripts": "1.0.9",
+    "css-loader": "^0.28.4",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "html-loader": "^0.4.5",
+    "less": "^2.7.2",
+    "less-loader": "^4.0.4",
+    "node-less": "^1.0.0",
+    "style-loader": "^0.18.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
