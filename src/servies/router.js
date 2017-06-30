@@ -11,7 +11,8 @@ import {
   // IndexLink
 } from 'react-router'
 import createHashHistory from 'history/createHashHistory'
-import LoginView from '../views/login'
+import LoginView from '@/views/login/login'
+import Category from '@/views/category/category'
 
 const history = createHashHistory()
 
@@ -25,6 +26,7 @@ class MainRouter extends Component{
           <div>
             <Route exact path="/" component={LoginView}/>
             <Route path="/user/:id" component={User}/>
+            <Route path="/category" component={Category}/>
           </div>
         </Router>
       )
