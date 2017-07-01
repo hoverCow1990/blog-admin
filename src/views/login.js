@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './login.less'
 
 class App extends Component {
   constructor () {

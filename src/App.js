@@ -24,6 +24,7 @@ class App extends Component {
     let list = this.state.list
     return (
       <div className="App">
+        <div style={{height:'50px',background:'#333',textAlign:'center',color:'#eee'}}>nav</div>
         <MainRouter/>
       </div>
     );
