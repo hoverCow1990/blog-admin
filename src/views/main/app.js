@@ -1,19 +1,16 @@
 import React, { Component } from 'react';
-// import {Link} from 'react-router'
-import {
-  Link
-} from 'react-router'
+import MainRouter from '@/servies/router'
+import './app.less';
+
 class App extends Component {
   constructor () {
     super()
-    this.state = {
-      bb: 111
-    }
+    this.state = {}
   }
   render () {
     return (
-      <div className="category">
-        category
+      <div id="app">
+        <MainRouter />
       </div>
     );
   }

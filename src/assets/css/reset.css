@@ -1,0 +1,33 @@
+@charset "utf-8";
+/*reset start*/
+html,body,h1,h2,h3,h4,h5,h6,div,dl,dt,dd,ul,ol,li,p,blockquote,pre,hr,figure,table,caption,th,td,form,fieldset,legend,input,button,textarea,menu{margin:0;padding:0;}
+html{
+  -webkit-tap-highlight-color: transparent;
+}
+html,body{
+  width:100%;
+}
+body{
+  font-family: '-apple-system-font','Helvetica Neue','Microsoft YaHei',sans-serif;
+  overflow-x: hidden;
+}
+a{
+  text-decoration: none;
+}
+img{
+  display: inline-block;
+  border: none;
+}
+input{
+  outline: none;
+  border: none;
+}
+input[type="text"],
+input[type="tele"]{
+  -webkit-appearance: none;
+}
+li{
+  list-style: none;
+}
+
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}

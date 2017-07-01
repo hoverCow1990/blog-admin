@@ -3,17 +3,11 @@ import {
   Router,
   Route,
   Redirect
-  // BrowserRouter,
-  // HashRouter,
-  // Match,
-  // Link,
-  // hashHistory,
-  // IndexLink
 } from 'react-router'
 import createHashHistory from 'history/createHashHistory'
 import LoginView from '@/views/login/login'
-import Category from '@/views/category/category'
-import TestView from '@/views/test/test'
+import CategoryView from '@/views/category/category'
+import SideNavView from '@/views/sideNav/sideNav'
 
 const history = createHashHistory()
 
@@ -24,25 +18,25 @@ class MainRouter extends Component{
   render(){
       return (
         <Router history={history}>
-          <div>
-            <Route exact path="/" component={LoginView}/>
-            <Route path="/user/:id" component={User}/>
-            <Route path="/home" render={() => <div>Home</div>}/>
-            <CowRoute path="/cool/:id" component={TestView}/>
+          <div className="app-wrapper">
+            <CowRoute exact path="/" component={LoginView}/>
+            <CowRoute exact path="/login" component={LoginView}/>
+            <CowRoute exact path="/main/:type" component={SideNavView}/>
+            <CowRoute exact path="/main/category" component={CategoryView}/>
           </div>
         </Router>
       )
     }
 }
 
-const User = ({match})=> {
-   return  <LoginView match={match}></LoginView>
-}
-
+// 主要route 如果未登录情况则跳转至登录页
 const CowRoute = ({ component: Component, ...rest }) => (
-  <Route {...rest} render={props => (
-    <Component {...props}/>
+  <Route exact {...rest} render={props => (
+    true ? (
+      <Component {...props}/>
+    ) : (
+      <Redirect to="/login"/>
+    )
   )}/>
 )
-
-export default MainRouter;
+export default MainRouter

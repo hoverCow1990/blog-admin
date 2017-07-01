@@ -1,0 +1,43 @@
+// 淡蓝色 eg: 按钮 tab
+@primary: #20a0ff;
+
+// 深红色 打分器 cow-topLine
+@red: #e34c26;
+
+// 深紫色 cow-topLine
+@violet: #563d7c;
+
+// 藏青色 cow-topLine 文章页侧导航
+@navy: #2c3e50;
+
+// 嫩黄色 cow-topLine 评论版小星
+@yellow: #f1e05a;
+
+// article前瞻图片的比例
+@perviewerProps: 0.72;
+
+// border线条
+.border (@type: all, @color: #e7e7e7) {
+  & when (@type = all) {
+    border: 1px solid @color;
+  }
+  & when (@type = top) {
+    border-top: 1px solid @color;
+  }
+  & when (@type = bottom) {
+    border-bottom: 1px solid @color;
+  }
+  & when (@type = left) {
+    border-left: 1px solid @color;
+  }
+  & when (@type = right) {
+    border-right: 1px solid @color;
+  }
+}
+
+// 超出部分省略号
+.textOverFlow {
+  overflow: hidden;
+  text-overflow:ellipsis;
+  white-space: nowrap;
+}
