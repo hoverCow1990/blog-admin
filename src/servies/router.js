@@ -11,18 +11,15 @@ import SideNavView from '@/views/sideNav/sideNav'
 
 const history = createHashHistory()
 
-class MainRouter extends Component{
-  constructor(){
-    super()
-  }
-  render(){
+class MainRouter extends Component {
+  render () {
       return (
         <Router history={history}>
           <div className="app-wrapper">
             <CowRoute exact path="/" component={LoginView}/>
             <CowRoute exact path="/login" component={LoginView}/>
-            <CowRoute exact path="/main/:type" component={SideNavView}/>
-            <CowRoute exact path="/main/category" component={CategoryView}/>
+            <CowRoute path="/main/:type" component={SideNavView}/>
+            <CowRoute path="/main/category" component={CategoryView}/>
           </div>
         </Router>
       )

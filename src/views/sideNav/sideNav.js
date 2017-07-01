@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Icon, Switch } from 'antd';
+import { Menu, Icon } from 'antd';
 import './sideNav.less'
 
 const SubMenu = Menu.SubMenu;
@@ -51,6 +51,7 @@ class SideNav extends Component {
       </div>
     )
   }
+  // 侧导航点击事件
   handleClick = (e) => {
    const key = e.key
    this.setState({

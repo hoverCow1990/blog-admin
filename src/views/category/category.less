@@ -1,0 +1,81 @@
+@import '../../assets/css/global.less';
+
+.category {
+  .btn-group {
+    button {
+      letter-spacing: 1px;
+    }
+    i {
+      font-size: 13px;
+      transform: translateY(0);
+    }
+  }
+  .category-bd {
+    width: 65%;
+    min-width: 600px;
+    padding-top: 30px;
+  }
+  .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+    font-size: 14px;
+    padding-left: 35px;
+    font-family: "Comic Sans MS","Arial";
+    font-weight: 600;
+    color: #444;
+  }
+  .category-list {
+    li {
+      position: relative;
+      padding: 3px;
+      font-size: 13px;
+      text-indent: 13px;
+      border-bottom: 1px dashed #e6e6e6;
+      color: #888;
+      transition: .2s;
+      overflow: hidden;
+      &:hover {
+        background-color: #f7f7f7;
+      }
+      &:before {
+        position: absolute;
+        content: '';
+        width: 3px;
+        height: 3px;
+        top: 13px;
+        left: 5px;
+        border-radius: 50%;
+        background-color: #ff3425;
+      }
+    }
+    p {
+      float: left;
+    }
+    .control {
+      float: right;
+      span {
+        padding-left: 10px;
+        transition: .2s;
+        cursor: pointer;
+        a {
+          color: #888;
+          &:hover {
+            color: @primary;
+          }
+        }
+        &:first-child {
+          padding-right: 10px;
+        }
+        &:hover {
+          color: @primary;
+        }
+      }
+    }
+  }
+  .addItem {
+    padding-top: 13px;
+    text-align: right;
+  }
+}
+.alert-container {
+  padding-top: 10px;
+  padding-bottom: 50px;
+}
