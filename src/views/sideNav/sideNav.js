@@ -29,7 +29,7 @@ class SideNav extends Component {
         >
           <SubMenu key="sub1" title={<span><Icon type="share-alt" /><span>Main Operation</span></span>}>
             <Menu.Item key="category">网站栏目管理</Menu.Item>
-            <Menu.Item key="artcle">所有文章列表</Menu.Item>
+            <Menu.Item key="artcleList">所有文章列表</Menu.Item>
             <Menu.Item key="hotKey">热门关键词管理</Menu.Item>
             <Menu.Item key="file">上传文件管理</Menu.Item>
           </SubMenu>
@@ -72,7 +72,7 @@ class SideNav extends Component {
  getdefaultOpenKeys (type) {
    switch (type) {
      case 'category':
-     case 'artcle':
+     case 'artcleList':
      case 'hotKey':
      case 'file':
        return 'sub1'

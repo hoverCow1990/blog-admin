@@ -34,21 +34,37 @@ body,
   flex:1;
   max-width: 1100px;
   padding: 40px;
-  background-color: #fff;
+  background-color: #fbfbfb;
 }
-.category-title {
+.admin-title {
   display: flex;
   padding-bottom: 10px;
+  margin-bottom: 30px;
   align-items: center;
   justify-content: space-between;
   font-size: 14px;
   letter-spacing: 1px;
   .border(bottom);
   p {
+      font-weight: 600;
+      color: #444;
     i {
       padding-right: 8px;
       font-size: 20px;
+      font-weight: 100;
       vertical-align: middle;
+      color: #666;
+    }
+  }
+  .btn-group {
+    button {
+      letter-spacing: 1px;
+    }
+    i {
+      font-size: 13px;
+      -webkit-transform: translateY(0);
+      -ms-transform: translateY(0);
+      transform: translateY(0);
     }
   }
 }

@@ -1,0 +1,113 @@
+@import '../../assets/css/global.less';
+
+.artcleList {
+  .artcleList-topBar {
+    display: flex;
+    justify-content: flex-end;
+    padding-bottom: 10px;
+    .topBar-container {
+      width: 340px;
+    }
+    .ant-select {
+      float: left;
+    }
+    .ant-input-affix-wrapper {
+      float: right;
+    }
+  }
+  .artcleList-main {
+    margin-top: 15px;
+    border-radius: 3px;
+    text-align: center;
+    background-color: #fff;
+    .border();
+  }
+  .main-hd {
+    display: flex;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    background-color: #f7f7f7;
+    font-size: 13px;
+    color: #666;
+    &>div:not(:last-child) {
+      .border(right);
+    }
+    .hd-id {
+      flex: 1;
+    }
+    .hd-title {
+      flex: 4;
+    }
+    .hd-update {
+      flex: 4;
+    }
+    .hd-message {
+      flex: 1;
+    }
+    .hd-watch {
+      flex: 1;
+    }
+    .hd-control {
+      flex: 3;
+    }
+  }
+  .article-list {
+    li {
+      display: flex;
+      padding-top: 8px;
+      padding-bottom: 8px;
+      &:hover {
+        background-color: #f6f6f6;
+      }
+      &:not(:last-child) {
+        border-bottom: 1px dashed #e6e6e6;
+      }
+      &>div:not(:last-child) {
+        .border(right);
+      }
+    }
+    .article-id {
+      flex: 1;
+    }
+    .article-title {
+      flex: 4;
+      color: #232323;
+      font-weight: 600;
+    }
+    .article-update {
+      flex: 4;
+    }
+    .article-message {
+      flex: 1;
+    }
+    .article-watch {
+      flex: 1;
+    }
+    .article-control {
+      flex: 3;
+    }
+    i {
+      padding-right: 18px;
+      cursor: pointer;
+      transition: color .2s;
+      &:not(:last-child):hover {
+        color: @primary;
+      }
+      &:last-child {
+        float: right;
+        color: #ea5657;
+      }
+    }
+  }
+  .artcleList-pagination {
+    padding-top: 25px;
+    .ant-pagination  {
+      float: right;
+      .ant-pagination-prev,
+      .ant-pagination-item,
+      .ant-pagination-next {
+        border-radius: 2px;
+      }
+    }
+  }
+}

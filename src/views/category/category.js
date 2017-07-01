@@ -96,40 +96,38 @@ class Category extends Component {
     }
   }
   render () {
-    const changeCategory = this.changeCategory
-    const showAlert = this.showAlert.bind(this)
-    const hidenAlert = this.hidenAlert.bind(this)
-    const handlerAddItemVal = this.handlerAddItemVal.bind(this)
-    const handlerSubmit = this.handlerSubmit.bind(this)
     let {alertVisible, isSubmitLoding, alertTitle, inputVerify} = this.state
     let PanelList = this.renderPanelList()
     return (
       <div className="category admin-container">
-        <div className="category-title">
+        <div className="category-title admin-title">
           <p><Icon type="solution" />网站栏目管理</p>
           <div className="btn-group">
-            <Button type="primary" onClick={() => showAlert(0)}><Icon type="plus-circle-o" />顶级栏目</Button>
+            <Button type="primary" onClick={() => this.showAlert(0)}><Icon type="plus-circle-o" />顶级栏目</Button>
           </div>
         </div>
         <div className="category-bd">
-          <Collapse accordion defaultActiveKey={['1']} onChange={changeCategory}>
+          <Collapse accordion defaultActiveKey={['1']} onChange={this.changeCategory}>
             {PanelList}
           </Collapse>
+          <div className="category-perview">
+            <div className="category-container"></div>
+          </div>
         </div>
         <Modal
           visible={alertVisible}
           title={alertTitle}
-          onOk={handlerSubmit}
-          onCancel={hidenAlert}
+          onOk={() => this.handlerSubmit()}
+          onCancel={() => this.hidenAlert()}
           footer={[
-            <Button key="back" size="large" onClick={hidenAlert}>Return</Button>,
-            <Button key="submit" type="primary" size="large" loading={isSubmitLoding} onClick={handlerSubmit}>
+            <Button key="back" size="large" onClick={() => this.hidenAlert()}>Return</Button>,
+            <Button key="submit" type="primary" size="large" loading={isSubmitLoding} onClick={() => this.handlerSubmit()}>
               Submit
             </Button>,
           ]}
         >
           <div className="alert-container">
-            <Input className={inputVerify ? "" : "err"} size="large" placeholder="栏目名称" onChange={e => handlerAddItemVal(e)}/>
+            <Input className={inputVerify ? "" : "err"} size="large" placeholder="栏目名称" onChange={e => this.handlerAddItemVal(e)}/>
           </div>
         </Modal>
       </div>
@@ -138,14 +136,13 @@ class Category extends Component {
   // 顶级菜单的渲染
   renderPanelList () {
     let renderListDetail = this.renderListDetail
-    let showAlert = this.showAlert.bind(this)
     return this.state.categoryList.map(item => (
       <Panel header={item.title} key={item.id}>
         <ul className="category-list">
           {renderListDetail(item.childrens)}
         </ul>
         <div className="btn-group addItem">
-          <Button type="primary"  onClick={() => showAlert(item.id)}><Icon type="plus-circle-o" />二级栏目</Button>
+          <Button type="primary"  onClick={() => this.showAlert(item.id)}><Icon type="plus-circle-o" />二级栏目</Button>
         </div>
       </Panel>
     ))
@@ -187,7 +184,7 @@ class Category extends Component {
   // 提交表单
   handlerSubmit () {
     let addItemVal = this.state.addItemVal
-    if (!addItemVal | /\d+/.test(addItemVal)) {
+    if (!addItemVal | /^\d+$/.test(addItemVal)) {
       this.setState({
         inputVerify: false
       })
