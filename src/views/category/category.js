@@ -131,7 +131,7 @@ class Category extends Component {
           </div>
         </Modal>
       </div>
-    );
+    )
   }
   // 顶级菜单的渲染
   renderPanelList () {

@@ -1,0 +1,74 @@
+@import '../../assets/css/global.less';
+
+.cowSelectBox {
+  position: relative;
+  input[type='text'] {
+    width: 100% !important;
+    cursor: pointer;
+  }
+  i {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    font-size: 12px;
+    transform: scale(.8);
+    color: #b1b1b1;
+    transform-origin: 6px 5px;
+    transition: .1s;
+    cursor: pointer;
+    &.down {
+      transform: rotate(180deg);
+    }
+  }
+  .selectBox {
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    padding-bottom: 10px;
+    max-height: 0;
+    top: 32px;
+    background-color: #fff;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translate3d(0, -5px, 0);
+    transition: .3s ease-in-out;
+    .border();
+    z-index: 999;
+    &.down {
+      max-height: 300px;
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  .select-category {
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow: hidden;
+  }
+  .category-context {
+    width: 100% !important;
+    &:not(:last-child) {
+      border-bottom: 1px dashed #e6e6e6;
+    }
+  }
+  .top-type {
+    width: 100%;
+    padding-top: 6px;
+    padding-bottom: 10px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .type-context {
+    width: 100%;
+    padding-left: 22px;
+    padding-bottom: 5px;
+    overflow: hidden;
+    li {
+      float: left;
+      padding-right: 5px;
+    }
+  }
+}

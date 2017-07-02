@@ -8,7 +8,8 @@ import createHashHistory from 'history/createHashHistory'
 import LoginView from '@/views/login/login'
 import CategoryView from '@/views/category/category'
 import SideNavView from '@/views/sideNav/sideNav'
-import ArtcleListView from '@/views/artcleList/artcleList'
+import ArticleListView from '@/views/articleList/articleList'
+import ArticleView from '@/views/article/article'
 
 const history = createHashHistory()
 
@@ -21,7 +22,8 @@ class MainRouter extends Component {
             <CowRoute exact path="/login" component={LoginView}/>
             <CowRoute path="/main/:type" component={SideNavView}/>
             <CowRoute path="/main/category" component={CategoryView}/>
-            <CowRoute path="/main/artcleList"  component={ArtcleListView}/>
+            <CowRoute path="/main/articleList"  component={ArticleListView}/>
+            <CowRoute path="/main/article"  component={ArticleView}/>
           </div>
         </Router>
       )

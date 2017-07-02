@@ -29,16 +29,17 @@ class SideNav extends Component {
         >
           <SubMenu key="sub1" title={<span><Icon type="share-alt" /><span>Main Operation</span></span>}>
             <Menu.Item key="category">网站栏目管理</Menu.Item>
-            <Menu.Item key="artcleList">所有文章列表</Menu.Item>
-            <Menu.Item key="hotKey">热门关键词管理</Menu.Item>
-            <Menu.Item key="file">上传文件管理</Menu.Item>
+            <Menu.Item key="articleList">文章列表</Menu.Item>
+            <Menu.Item key="article">新增 / 修改文章</Menu.Item>
+            <Menu.Item key="file">上传文件</Menu.Item>
+            <Menu.Item key="hotKey">热门关键词</Menu.Item>
           </SubMenu>
           <SubMenu key="sub2" title={<span><Icon type="edit" /><span>Comment</span></span>}>
-            <Menu.Item key="messageBoard">留言板评论管理</Menu.Item>
-            <Menu.Item key="messageArtcle">文章页评论管理</Menu.Item>
+            <Menu.Item key="messageBoard">留言板评论</Menu.Item>
+            <Menu.Item key="messageArtcle">文章页评论</Menu.Item>
           </SubMenu>
           <SubMenu key="sub3" title={<span><Icon type="user-add" /><span>Member</span></span>}>
-            <Menu.Item key="number">会员积分管理</Menu.Item>
+            <Menu.Item key="number">会员积分</Menu.Item>
             <Menu.Item key="numberDemo">会员作品审核</Menu.Item>
           </SubMenu>
           <SubMenu key="sub4" title={<span><Icon type="rocket" /><span>Game</span></span>}>
@@ -54,14 +55,15 @@ class SideNav extends Component {
   // 侧导航点击事件
   handleClick = (e) => {
    const key = e.key
+   let location = key === 'article' ? '/main/article?id=0' : `/main/${key}`
    this.setState({
      current: key,
    })
-   this.props.history.push(`/main/${key}`)
+   this.props.history.push(location)
  }
  // 获取初始打开的tab
  initialState () {
-   const type = this.props.match.params.type
+   let type = this.props.match.params.type
    let defaultOpenKeys = this.getdefaultOpenKeys(type)
    this.setState({
      current: type,
@@ -72,7 +74,8 @@ class SideNav extends Component {
  getdefaultOpenKeys (type) {
    switch (type) {
      case 'category':
-     case 'artcleList':
+     case 'articleList':
+     case 'article':
      case 'hotKey':
      case 'file':
        return 'sub1'
@@ -86,6 +89,8 @@ class SideNav extends Component {
        return 'sub4'
      case 'dataChart':
        return 'sub5'
+     default:
+       return ''
    }
  }
 }

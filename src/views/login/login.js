@@ -48,7 +48,7 @@ class NormalLoginForm extends React.Component {
           </Button>
         </div>
       </Form>
-    );
+    )
   }
 }
 
@@ -68,7 +68,7 @@ class Login extends Component {
           <LoginForm linkToCateGory={() => this.linkToCateGory()}/>
         </div>
       </div>
-    );
+    )
   }
   linkToCateGory () {
     this.props.history.push('/main/category')
