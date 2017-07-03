@@ -7,6 +7,7 @@ import {
   Upload,
   Button
 } from 'antd'
+import $Constant from '@/config/constant'
 import './cowEditor.less'
 
 class CowEditor extends Component {
@@ -31,12 +32,19 @@ class CowEditor extends Component {
         }
       },
       perviewerVisible: false,
-      perviewer: '',
-      context: []
+      perviewerContext: '',
+      mainContext: [],
+      perviewerVal: {
+        img: '',
+        demoLink: '',
+        downLoadLink: '',
+        info: ''
+      },
+      perviewerSwitch: true
     }
   }
   render () {
-    const {preViewUploadProps, perviewer} = this.state
+    const {preViewUploadProps, perviewerContext} = this.state
     const context = this.state.context
     return (
       <div className="cow-editor">
@@ -47,7 +55,7 @@ class CowEditor extends Component {
           </ul>
         </div>
         <div className="article-main">
-          {perviewer}
+          <div className="article-box" dangerouslySetInnerHTML={{__html: perviewerContext}}></div>
         </div>
         <Modal
           title="Basic Modal"
@@ -55,14 +63,17 @@ class CowEditor extends Component {
           onOk={() => this.handlePerviewerOk()}
           onCancel={() => this.handlePerviewerCancel()}
         >
-          <Upload {...preViewUploadProps}>
-            <Button>
-              <Icon type="upload" /> 上传前瞻图
-            </Button>
-          </Upload>
-          <Input placeholder="地址链接" size="large" />
-          <Input placeholder="下载地址" size="large" />
-          <Input type="textarea" placeholder="Autosize height with minimum and maximum number of lines" autosize={{ minRows: 2, maxRows: 6 }} />
+          <div className="editor-perviewer-model">
+            <Upload {...preViewUploadProps}>
+              <Button>
+                <Icon type="upload" /> 上传前瞻图
+              </Button>
+            </Upload>
+            <Input placeholder="地址链接" size="large" ref="demoLink"/>
+            <Input placeholder="下载地址" size="large" ref="downLoadLink"/>
+            <Input placeholder="github" size="large" ref="githubLink"/>
+            <Input type="textarea" ref="info" placeholder="Autosize height with minimum and maximum number of lines" autosize={{ minRows: 4, maxRows: 6 }} />
+          </div>
         </Modal>
       </div>
     )
@@ -72,16 +83,53 @@ class CowEditor extends Component {
       perviewerVisible: true
     })
   }
-  handlePerviewerOk = (e) => {
-    console.log(e);
+  handlePerviewerOk = e => {
+    const templateImg = 'http://www.web-jackiee.com/uploads/allimg/170313/1-1F313043542922.jpg'
+    const templateDemo = this.refs.demoLink.refs.input.value
+    const templateDownload = this.refs.downLoadLink.refs.input.value
+    const templateGithub = this.refs.githubLink.refs.input.value
+    const templateInfo = this.refs.info.refs.input.value
+    const perviewerContext = this.getPerviewerDummydDom({templateImg, templateDemo, templateDownload, templateGithub, templateInfo})
+    this.setState({
+      perviewerVisible: false,
+      perviewerContext
+    })
+    // console.log()
+    // document.getElementById('article-perviewer').onclick = () => {
+    //   this.setState({
+    //     perviewerVisible: true
+    //   })
+    // }
+    setTimeout(() => {
+      document.getElementById('article-perviewer').onclick = () => {
+        this.setState({
+          perviewerVisible: true,
+          perviewerSwitch: false
+        })
+      }
+    }, 500)
+  }
+  componentDidUpdate (a, b) {
+    // let perviewer = document.getElementById('article-perviewer')
+    // let {perviewerSwitch} = this.state
+    // if (perviewer && perviewerSwitch) {
+    //   console.log(111)
+    //   document.getElementById('article-perviewer').onclick = () => {
+    //     this.setState({
+    //       perviewerVisible: true,
+    //       perviewerSwitch: false
+    //     })
+    //   }
+    // }
+  }
+  handlePerviewerCancel = (e) => {
     this.setState({
       perviewerVisible: false
     })
   }
-  handlePerviewerCancel = (e) => {
-    console.log(e);
-    this.setState({
-      perviewerVisible: false
+  getPerviewerDummydDom (valObj) {
+    return $Constant.TEMPLATE.perviewer.replace(/\{\{\s.+\s\}\}/g, $0 => {
+      return valObj[$0.match(/\w+/g)[0]]
     })
   }
 }
