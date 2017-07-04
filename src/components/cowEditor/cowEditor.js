@@ -40,25 +40,36 @@ class CowEditor extends Component {
         downLoadLink: '',
         info: ''
       },
-      perviewerSwitch: true
+      perviewerSwitch: true,
+      paragraphVisible: false,
+      paragraphList: [{
+        title: '',
+        list: [{
+          title: 'hello',
+          context: 'xixixi'
+        }]
+      }],
+      activeParagraph: 0
     }
   }
   render () {
     const {preViewUploadProps, perviewerContext} = this.state
     const context = this.state.context
+    const paragraphModel = this.renderParagraphModel()
     return (
       <div className="cow-editor">
         <div className="article-context">
           <div className="article-admin-title"><Icon type="file-text" />文章内容</div>
           <ul className="article-admin-tool">
-            <li onClick={() => this.showPerviewerModal()}><Icon type="heart" /><span>前瞻部分</span></li><li><Icon type="tag" /><span>段落</span></li>
+            <li onClick={() => this.showPerviewerModal()}><Icon type="heart" /><span>前瞻部分</span></li>
+            <li onClick={() => this.showParagraphModal()}><Icon type="tag" /><span>段落</span></li>
           </ul>
         </div>
         <div className="article-main">
           <div className="article-box" dangerouslySetInnerHTML={{__html: perviewerContext}}></div>
         </div>
         <Modal
-          title="Basic Modal"
+          title="Add Perviewer"
           visible={this.state.perviewerVisible}
           onOk={() => this.handlePerviewerOk()}
           onCancel={() => this.handlePerviewerCancel()}
@@ -75,8 +86,106 @@ class CowEditor extends Component {
             <Input type="textarea" ref="info" placeholder="Autosize height with minimum and maximum number of lines" autosize={{ minRows: 4, maxRows: 6 }} />
           </div>
         </Modal>
+        <Modal
+          title="Add Paragraph"
+          visible={this.state.paragraphVisible}
+          onOk={() => this.handleParagraphOk()}
+          onCancel={() => this.handleParagraphCancel()}
+        >
+          {paragraphModel}
+        </Modal>
       </div>
     )
+  }
+  // 渲染当前的ParagraphModel弹窗
+  renderParagraphModel () {
+    let { activeParagraph, paragraphList } = this.state
+    let modelData = paragraphList[activeParagraph]
+    let liDom = modelData.list.map((item, index) => (
+      <li key={index}>
+        <div className="item-hd">
+          <p>{ '' + Math.ceil((index + 1)/ 10) + '.' + index % 10 + ' ' + item.title}</p>
+          <div className="item-tool">
+            <Icon type="copy" />
+            <Icon type="picture" />
+            <Icon type="code-o" />
+            <Icon type="link" />
+            <Icon type="up-circle" onClick={() => this.exchangeParagraphItem(index, 'up')}/>
+            <Icon type="down-circle" onClick={() => this.exchangeParagraphItem(index, 'down')}/>
+            <Icon type="close-circle" onClick={() => this.removedParagraphItem(index)}/>
+          </div>
+        </div>
+        <div className="item-bd">
+          <input type="text" value={item.context} onChange={e => this.handlerBdValChange(e, index)}/>
+        </div>
+      </li>
+    ))
+    return (
+      <div className="editor-paragraph-model">
+        <div className="paragraph-hd">
+          <Input placeholder="标题" size="large" ref="paragraphTitle"/>
+          <div><Icon type="plus-square" onClick={() => this.addParagraphItem()}/></div>
+        </div>
+        <ul className="paragraph-list">
+          { liDom }
+        </ul>
+      </div>
+    )
+  }
+  // 增加一个段落
+  addParagraphItem () {
+    let { activeParagraph, paragraphList } = this.state
+    let modelData = paragraphList[activeParagraph]
+    let list = modelData.list
+    list.push({
+      title: '',
+      context: '' + Math.random()
+    })
+    modelData = Object.assign({}, {
+      list
+    })
+    paragraphList[activeParagraph] = modelData
+    this.setState({
+      paragraphList
+    })
+  }
+  // 删除一个段落
+  removedParagraphItem (index) {
+    let { activeParagraph, paragraphList } = this.state
+    let modelData = paragraphList[activeParagraph]
+    let list = modelData.list
+    list.splice(index, 1)
+    modelData = Object.assign({}, {
+      list
+    })
+    paragraphList[activeParagraph] = modelData
+    this.setState({
+      paragraphList
+    })
+  }
+  // 交换一个段落位置
+  exchangeParagraphItem (index, type) {
+    let { activeParagraph, paragraphList } = this.state
+    let modelData = paragraphList[activeParagraph]
+    let list = modelData.list
+    let changeItem = list[index]
+    let beChengeNum = type === 'up' ? index - 1 : index + 1
+    let beChengeItem = list[beChengeNum]
+    if (beChengeItem) {
+      list[index] = beChengeItem
+      list[beChengeNum] = changeItem
+    }
+    modelData = Object.assign({}, {
+      list
+    })
+    paragraphList[activeParagraph] = modelData
+    this.setState({
+      paragraphList
+    })
+  }
+  // 处理该激活段落的对应小节的input改变事件
+  handlerBdValChange (e, index) {
+
   }
   showPerviewerModal = () => {
     this.setState({
@@ -94,12 +203,6 @@ class CowEditor extends Component {
       perviewerVisible: false,
       perviewerContext
     })
-    // console.log()
-    // document.getElementById('article-perviewer').onclick = () => {
-    //   this.setState({
-    //     perviewerVisible: true
-    //   })
-    // }
     setTimeout(() => {
       document.getElementById('article-perviewer').onclick = () => {
         this.setState({
@@ -109,20 +212,7 @@ class CowEditor extends Component {
       }
     }, 500)
   }
-  componentDidUpdate (a, b) {
-    // let perviewer = document.getElementById('article-perviewer')
-    // let {perviewerSwitch} = this.state
-    // if (perviewer && perviewerSwitch) {
-    //   console.log(111)
-    //   document.getElementById('article-perviewer').onclick = () => {
-    //     this.setState({
-    //       perviewerVisible: true,
-    //       perviewerSwitch: false
-    //     })
-    //   }
-    // }
-  }
-  handlePerviewerCancel = (e) => {
+  handlePerviewerCancel () {
     this.setState({
       perviewerVisible: false
     })
@@ -130,6 +220,22 @@ class CowEditor extends Component {
   getPerviewerDummydDom (valObj) {
     return $Constant.TEMPLATE.perviewer.replace(/\{\{\s.+\s\}\}/g, $0 => {
       return valObj[$0.match(/\w+/g)[0]]
+    })
+  }
+  showParagraphModal = () => {
+    console.log(111)
+    this.setState({
+      paragraphVisible: true
+    })
+  }
+  handleParagraphOk () {
+    this.setState({
+      paragraphVisible: false
+    })
+  }
+  handleParagraphCancel () {
+    this.setState({
+      paragraphVisible: false
     })
   }
 }
