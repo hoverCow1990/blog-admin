@@ -8,6 +8,7 @@ import {
   Button
 } from 'antd'
 import $Constant from '@/config/constant'
+import TagText from '@/components/tagText/tagText'
 import './cowEditor.less'
 
 class CowEditor extends Component {
@@ -94,6 +95,7 @@ class CowEditor extends Component {
         >
           {paragraphModel}
         </Modal>
+        <TagText type={'p'} isVisible={true}></TagText>
       </div>
     )
   }

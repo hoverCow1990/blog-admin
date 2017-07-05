@@ -169,7 +169,7 @@ class Article extends Component {
               <li className="maxWidth maxHeight pic">
                 <span className="tag">概要</span>
                 <div className="list-context">
-                  <Input type="textarea" placeholder="文章概要" autosize={{ minRows: 2, maxRows: 6 }} />
+                  <textarea type="textarea" placeholder="文章概要" className="ant-input" style={{height: '46px', minHeight: '46px', maxHeight: '118px'}}></textarea>
                 </div>
               </li>
             </ul>
