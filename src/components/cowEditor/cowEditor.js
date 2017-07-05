@@ -50,11 +50,15 @@ class CowEditor extends Component {
           context: 'xixixi'
         }]
       }],
-      activeParagraph: 0
+      activeParagraph: 0,
+      activeItem: 0,
+      isTagTextVisiable: false,
+      tagText: ''
+
     }
   }
   render () {
-    const {preViewUploadProps, perviewerContext} = this.state
+    const {preViewUploadProps, perviewerContext, isTagTextVisiable, tagText} = this.state
     const context = this.state.context
     const paragraphModel = this.renderParagraphModel()
     return (
@@ -84,18 +88,19 @@ class CowEditor extends Component {
             <Input placeholder="地址链接" size="large" ref="demoLink"/>
             <Input placeholder="下载地址" size="large" ref="downLoadLink"/>
             <Input placeholder="github" size="large" ref="githubLink"/>
-            <Input type="textarea" ref="info" placeholder="Autosize height with minimum and maximum number of lines" autosize={{ minRows: 4, maxRows: 6 }} />
+            <Input type="textarea" ref="info" placeholder="文章简述" autosize={{ minRows: 4, maxRows: 6 }} />
           </div>
         </Modal>
         <Modal
           title="Add Paragraph"
           visible={this.state.paragraphVisible}
+          maskClosable={false}
           onOk={() => this.handleParagraphOk()}
           onCancel={() => this.handleParagraphCancel()}
         >
           {paragraphModel}
         </Modal>
-        <TagText type={'p'} isVisible={true}></TagText>
+        <TagText type={ tagText } isVisible={ isTagTextVisiable } hiddenTagText={() => this.hiddenTagText()} submitTagText={data => this.submitTagText(data)}></TagText>
       </div>
     )
   }
@@ -108,7 +113,7 @@ class CowEditor extends Component {
         <div className="item-hd">
           <p>{ '' + Math.ceil((index + 1)/ 10) + '.' + index % 10 + ' ' + item.title}</p>
           <div className="item-tool">
-            <Icon type="copy" />
+            <Icon type="copy" onClick={() => this.showTagText('p', index)}/>
             <Icon type="picture" />
             <Icon type="code-o" />
             <Icon type="link" />
@@ -133,6 +138,36 @@ class CowEditor extends Component {
         </ul>
       </div>
     )
+  }
+  // 显示编辑标签的弹窗
+  showTagText (tagText, index) {
+    this.setState({
+      tagText,
+      activeItem: index,
+      isTagTextVisiable: true
+    })
+  }
+  // 隐藏显示标签的弹窗
+  hiddenTagText () {
+    this.setState({
+      isTagTextVisiable: false
+    })
+  }
+  // 标签编辑弹窗点击确定后事件 将获取组件传递而来的value值
+  submitTagText (data) {
+    console.log(data)
+    let { activeParagraph, paragraphList, activeItem } = this.state
+    let modelData = paragraphList[activeParagraph]
+    let list = modelData.list
+    list[activeItem].context = list[activeItem].context + data.value
+    modelData = Object.assign({}, {
+      list
+    })
+    paragraphList[activeParagraph] = modelData
+    this.setState({
+      paragraphList
+    })
+    this.hiddenTagText()
   }
   // 增加一个段落
   addParagraphItem () {
@@ -225,7 +260,6 @@ class CowEditor extends Component {
     })
   }
   showParagraphModal = () => {
-    console.log(111)
     this.setState({
       paragraphVisible: true
     })
