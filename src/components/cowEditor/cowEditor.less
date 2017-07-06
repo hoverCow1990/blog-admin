@@ -361,7 +361,6 @@
 }
 .editor-paragraph-model {
   height: 500px;
-  overflow-y: auto;
   .paragraph-hd {
     display: flex;
     margin-top: 12px;
@@ -374,6 +373,10 @@
       font-size: 28px;
       cursor: pointer;
     }
+  }
+  .paragraph-wrapper {
+    height: 410px;
+    overflow-y: scroll;
   }
   .paragraph-list {
     margin-top: 20px;

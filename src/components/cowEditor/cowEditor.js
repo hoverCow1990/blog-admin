@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import $Constant from '@/config/constant'
+import TagEditor from '@/components/tagEditor/tagEditor'
 import {
   Icon,
   Modal,
@@ -7,18 +9,17 @@ import {
   Upload,
   Button
 } from 'antd'
-import $Constant from '@/config/constant'
-import TagText from '@/components/tagText/tagText'
 import './cowEditor.less'
 
+// 老牛编辑器组件
 class CowEditor extends Component {
   constructor () {
     super()
     this.state = {
-      preViewUploadProps: {
+      preViewUploadProps: { // preView部分的上传图片
         name: 'file',
         action: '//jsonplaceholder.typicode.com/posts/',
-        headers: {
+        headers: {  //请求头
            authorization: 'authorization-text'
         },
         onChange(info) {
@@ -32,55 +33,56 @@ class CowEditor extends Component {
           }
         }
       },
-      perviewerVisible: false,
-      perviewerContext: '',
-      mainContext: [],
-      perviewerVal: {
-        img: '',
-        demoLink: '',
-        downLoadLink: '',
-        info: ''
+      perviewerVisible: false, // perviewer弹窗是否可见
+      perviewerContext: '', // perviewer弹窗内所有内容转为html格式的value信息
+      perviewerVal: { // perviewer弹窗内单个input的
+        img: '', // 图
+        demoLink: '', // 网站demo的链接
+        downLoadLink: '', //下载链接地址
+        info: ''  // 前瞻简介
       },
-      perviewerSwitch: true,
-      paragraphVisible: false,
-      paragraphList: [{
+      chapterVisible: false, // 章节弹窗是否显示
+      chapterList: [{ // 章节的所有内容列表
         title: '',
-        list: [{
-          title: 'hello',
-          context: 'xixixi'
+        paragraphs: [{  // 每个章节的段落项
+          title: '',
+          context: ''
         }]
       }],
-      activeParagraph: 0,
-      activeItem: 0,
-      isTagTextVisiable: false,
-      tagText: ''
+      activeChapter: 0, // 当前活动的章节信息
+      activeParagraph: 0,  // 当前活动的段落信息
+      isTagEditorVisiable: false, // 是否tag标签编辑器可见
+      tagEditorType: '' // tag标签的类型 比如p 或是 image
 
     }
   }
   render () {
-    const {preViewUploadProps, perviewerContext, isTagTextVisiable, tagText} = this.state
-    const context = this.state.context
-    const paragraphModel = this.renderParagraphModel()
+    const { preViewUploadProps, perviewerContext, isTagEditorVisiable, tagEditorType, perviewerVisible, chapterVisible } = this.state
     return (
       <div className="cow-editor">
         <div className="article-context">
           <div className="article-admin-title"><Icon type="file-text" />文章内容</div>
           <ul className="article-admin-tool">
             <li onClick={() => this.showPerviewerModal()}><Icon type="heart" /><span>前瞻部分</span></li>
-            <li onClick={() => this.showParagraphModal()}><Icon type="tag" /><span>段落</span></li>
+            <li onClick={() => this.showChapterModal()}><Icon type="tag" /><span>段落</span></li>
           </ul>
         </div>
         <div className="article-main">
-          <div className="article-box" dangerouslySetInnerHTML={{__html: perviewerContext}}></div>
+          <div className="article-box" dangerouslySetInnerHTML={{ __html: perviewerContext }}></div>
         </div>
         <Modal
           title="Add Perviewer"
-          visible={this.state.perviewerVisible}
+          visible={perviewerVisible}
           onOk={() => this.handlePerviewerOk()}
           onCancel={() => this.handlePerviewerCancel()}
         >
           <div className="editor-perviewer-model">
-            <Upload {...preViewUploadProps}>
+            <Upload
+              name='file'
+              action='//jsonplaceholder.typicode.com/posts/'
+              headers={{  //请求头
+                 authorization: 'authorization-text'
+              }}>
               <Button>
                 <Icon type="upload" /> 上传前瞻图
               </Button>
@@ -92,38 +94,38 @@ class CowEditor extends Component {
           </div>
         </Modal>
         <Modal
-          title="Add Paragraph"
-          visible={this.state.paragraphVisible}
+          title="Add Chapter"
+          visible={chapterVisible}
           maskClosable={false}
-          onOk={() => this.handleParagraphOk()}
-          onCancel={() => this.handleParagraphCancel()}
+          onOk={() => this.handleChapterOk()}
+          onCancel={() => this.handleChapterCancel()}
         >
-          {paragraphModel}
+          { this.renderChapterModel() }
         </Modal>
-        <TagText type={ tagText } isVisible={ isTagTextVisiable } hiddenTagText={() => this.hiddenTagText()} submitTagText={data => this.submitTagText(data)}></TagText>
+        <TagEditor type={ tagEditorType } isVisible={ isTagEditorVisiable } hiddenTagEditor={() => this.hiddenTagEditor()} submitTagEditor={data => this.submitTagEditor(data)} />
       </div>
     )
   }
-  // 渲染当前的ParagraphModel弹窗
-  renderParagraphModel () {
-    let { activeParagraph, paragraphList } = this.state
-    let modelData = paragraphList[activeParagraph]
-    let liDom = modelData.list.map((item, index) => (
+  // 渲染当前的ChapterModel 章节弹窗
+  renderChapterModel () {
+    let { chapterList, activeChapter } = this.state
+    let modelData = chapterList[activeChapter]
+    let paragraphDom = modelData.paragraphs.map((item, index) => (
       <li key={index}>
         <div className="item-hd">
           <p>{ '' + Math.ceil((index + 1)/ 10) + '.' + index % 10 + ' ' + item.title}</p>
           <div className="item-tool">
-            <Icon type="copy" onClick={() => this.showTagText('p', index)}/>
+            <Icon type="copy" onClick={() => this.showTagEditor('p', index)}/>
             <Icon type="picture" />
             <Icon type="code-o" />
             <Icon type="link" />
-            <Icon type="up-circle" onClick={() => this.exchangeParagraphItem(index, 'up')}/>
-            <Icon type="down-circle" onClick={() => this.exchangeParagraphItem(index, 'down')}/>
-            <Icon type="close-circle" onClick={() => this.removedParagraphItem(index)}/>
+            <Icon type="up-circle" onClick={() => this.exchangeParagraph(index, 'up')}/>
+            <Icon type="down-circle" onClick={() => this.exchangeParagraph(index, 'down')}/>
+            <Icon type="close-circle" onClick={() => this.removeParagraph(index)}/>
           </div>
         </div>
         <div className="item-bd">
-          <input type="text" value={item.context} onChange={e => this.handlerBdValChange(e, index)}/>
+          <input type="text" onClick={() => this.handlerChangeActiveParagraph(index)} onChange={e => this.handlerParagraphValChange(e, index)} ref={ activeChapter + ' ' + index }/>
         </div>
       </li>
     ))
@@ -131,111 +133,147 @@ class CowEditor extends Component {
       <div className="editor-paragraph-model">
         <div className="paragraph-hd">
           <Input placeholder="标题" size="large" ref="paragraphTitle"/>
-          <div><Icon type="plus-square" onClick={() => this.addParagraphItem()}/></div>
+          <div><Icon type="plus-square" onClick={() => this.addParagraph()}/></div>
         </div>
-        <ul className="paragraph-list">
-          { liDom }
-        </ul>
+        <div className="paragraph-wrapper">
+          <ul className="paragraph-list">
+            { paragraphDom }
+          </ul>
+        </div>
       </div>
     )
   }
   // 显示编辑标签的弹窗
-  showTagText (tagText, index) {
+  showTagEditor (tagEditorType, index) {
     this.setState({
-      tagText,
+      tagEditorType,
       activeItem: index,
-      isTagTextVisiable: true
+      isTagEditorVisiable: true
     })
   }
   // 隐藏显示标签的弹窗
-  hiddenTagText () {
+  hiddenTagEditor () {
     this.setState({
-      isTagTextVisiable: false
+      isTagEditorVisiable: false
+    })
+  }
+  // 鼠标点击
+  handlerChangeActiveParagraph (index) {
+    this.setState({
+      activeParagraph: index
+    })
+  }
+  // 处理该激活段落的对应小节的input改变事件
+  handlerParagraphValChange (e, index) {
+    let val = e.target.value
+    let { chapterList, activeChapter, activeParagraph } = this.state
+    let modelData = chapterList[activeChapter]
+    let paragraphs = modelData.paragraphs
+    paragraphs[activeParagraph].context = val
+    modelData = Object.assign({}, {
+      paragraphs
+    })
+    chapterList[activeParagraph] = modelData
+    this.setState({
+      chapterList
     })
   }
   // 标签编辑弹窗点击确定后事件 将获取组件传递而来的value值
-  submitTagText (data) {
-    console.log(data)
-    let { activeParagraph, paragraphList, activeItem } = this.state
-    let modelData = paragraphList[activeParagraph]
-    let list = modelData.list
-    list[activeItem].context = list[activeItem].context + data.value
+  submitTagEditor (data) {
+    let { chapterList, activeChapter, activeParagraph } = this.state
+    let modelData = chapterList[activeParagraph]
+    let paragraphs = modelData.paragraphs
+    const input = this.refs[activeChapter + ' ' + activeParagraph]
+    const addStart = input.selectionStart
+    const lastVal = input.value
+    const newVal = lastVal.substring(0, addStart) + data.value + lastVal.substring(addStart)
+    paragraphs[activeParagraph].context = newVal
     modelData = Object.assign({}, {
-      list
+      paragraphs
     })
-    paragraphList[activeParagraph] = modelData
+    chapterList[activeParagraph] = modelData
     this.setState({
-      paragraphList
+      chapterList
     })
-    this.hiddenTagText()
+    this.refs[activeChapter + ' ' + activeParagraph].value = newVal
+    this.hiddenTagEditor()
   }
   // 增加一个段落
-  addParagraphItem () {
-    let { activeParagraph, paragraphList } = this.state
-    let modelData = paragraphList[activeParagraph]
-    let list = modelData.list
-    list.push({
+  addParagraph () {
+    let { chapterList, activeChapter } = this.state
+    let modelData = chapterList[activeChapter]
+    let paragraphs = modelData.paragraphs
+    paragraphs.push({
       title: '',
       context: '' + Math.random()
     })
     modelData = Object.assign({}, {
-      list
+      paragraphs
     })
-    paragraphList[activeParagraph] = modelData
+    debugger
+    chapterList[activeChapter].paragraphs = modelData
     this.setState({
-      paragraphList
+      chapterList
     })
   }
   // 删除一个段落
-  removedParagraphItem (index) {
-    let { activeParagraph, paragraphList } = this.state
-    let modelData = paragraphList[activeParagraph]
-    let list = modelData.list
-    list.splice(index, 1)
+  removeParagraph (index) {
+    console.log(index)
+    let { chapterList, activeChapter } = this.state
+    let modelData = chapterList[activeChapter]
+    let paragraphs = modelData.paragraphs
+    debugger
+    console.log(paragraphs)
+    paragraphs.splice(index, 1)
+    debugger
     modelData = Object.assign({}, {
-      list
+      paragraphs
     })
-    paragraphList[activeParagraph] = modelData
+    chapterList[activeChapter] = modelData
     this.setState({
-      paragraphList
+      chapterList
     })
   }
   // 交换一个段落位置
-  exchangeParagraphItem (index, type) {
-    let { activeParagraph, paragraphList } = this.state
-    let modelData = paragraphList[activeParagraph]
-    let list = modelData.list
-    let changeItem = list[index]
+  exchangeParagraph (index, type) {
+    let { chapterList, activeChapter } = this.state
+    let modelData = chapterList[activeChapter]
+    let paragraphs = modelData.paragraphs
+    let changeParagraph = paragraphs[index]
     let beChengeNum = type === 'up' ? index - 1 : index + 1
-    let beChengeItem = list[beChengeNum]
-    if (beChengeItem) {
-      list[index] = beChengeItem
-      list[beChengeNum] = changeItem
+    let beChengeParagraph = paragraphs[beChengeNum]
+    if (beChengeParagraph) {
+      paragraphs[index] = beChengeParagraph
+      paragraphs[beChengeNum] = changeParagraph
     }
     modelData = Object.assign({}, {
-      list
+      paragraphs
     })
-    paragraphList[activeParagraph] = modelData
+    chapterList[activeChapter] = modelData
     this.setState({
-      paragraphList
+      chapterList
     })
   }
-  // 处理该激活段落的对应小节的input改变事件
-  handlerBdValChange (e, index) {
-
-  }
+  // 显示前瞻弹窗
   showPerviewerModal = () => {
     this.setState({
       perviewerVisible: true
     })
   }
+  // 取消前瞻弹窗
+  handlePerviewerCancel () {
+    this.setState({
+      perviewerVisible: false
+    })
+  }
+  // 前瞻弹窗确定按钮
   handlePerviewerOk = e => {
     const templateImg = 'http://www.web-jackiee.com/uploads/allimg/170313/1-1F313043542922.jpg'
     const templateDemo = this.refs.demoLink.refs.input.value
     const templateDownload = this.refs.downLoadLink.refs.input.value
     const templateGithub = this.refs.githubLink.refs.input.value
     const templateInfo = this.refs.info.refs.input.value
-    const perviewerContext = this.getPerviewerDummydDom({templateImg, templateDemo, templateDownload, templateGithub, templateInfo})
+    const perviewerContext = this.getPerviewerDom({templateImg, templateDemo, templateDownload, templateGithub, templateInfo})
     this.setState({
       perviewerVisible: false,
       perviewerContext
@@ -243,35 +281,33 @@ class CowEditor extends Component {
     setTimeout(() => {
       document.getElementById('article-perviewer').onclick = () => {
         this.setState({
-          perviewerVisible: true,
-          perviewerSwitch: false
+          perviewerVisible: true
         })
       }
     }, 500)
   }
-  handlePerviewerCancel () {
-    this.setState({
-      perviewerVisible: false
-    })
-  }
-  getPerviewerDummydDom (valObj) {
+  // 获取节点类型前瞻节点
+  getPerviewerDom (valObj) {
     return $Constant.TEMPLATE.perviewer.replace(/\{\{\s.+\s\}\}/g, $0 => {
       return valObj[$0.match(/\w+/g)[0]]
     })
   }
-  showParagraphModal = () => {
+  // 显示章节弹窗
+  showChapterModal = () => {
     this.setState({
-      paragraphVisible: true
+      chapterVisible: true
     })
   }
-  handleParagraphOk () {
+  // 确定章节弹窗
+  handleChapterOk () {
     this.setState({
-      paragraphVisible: false
+      chapterVisible: false
     })
   }
-  handleParagraphCancel () {
+  // 取消章节弹窗
+  handleChapterCancel () {
     this.setState({
-      paragraphVisible: false
+      chapterVisible: false
     })
   }
 }

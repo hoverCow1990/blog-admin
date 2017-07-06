@@ -4,9 +4,9 @@ import {
   Button,
   Icon
 } from 'antd'
-import './tagText.less'
+import './tagEditor.less'
 
-class TagText extends Component {
+class TagEditor extends Component {
   constructor () {
     super()
     this.state = {
@@ -42,11 +42,14 @@ class TagText extends Component {
     }
   }
   handlerPval () {
-    this.props.submitTagText({
+    let val = this.refs.textarea.value
+    let value = val ? '<p>' + this.refs.textarea.value + '</p>' : ''
+    this.props.submitTagEditor({
       type: 'p',
-      value: '<p>' + this.refs.textarea.value + '</p>'
+      value
     })
+    this.refs.textarea.value = ''
   }
 }
 
-export default TagText;
+export default TagEditor;
