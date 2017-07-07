@@ -110,6 +110,8 @@ class CowEditor extends Component {
   renderChapterModel () {
     let { chapterList, activeChapter } = this.state
     let modelData = chapterList[activeChapter]
+    console.log(chapterList, activeChapter)
+    console.log(modelData)
     let paragraphDom = modelData.paragraphs.map((item, index) => (
       <li key={index}>
         <div className="item-hd">
@@ -181,7 +183,7 @@ class CowEditor extends Component {
   // 标签编辑弹窗点击确定后事件 将获取组件传递而来的value值
   submitTagEditor (data) {
     let { chapterList, activeChapter, activeParagraph } = this.state
-    let modelData = chapterList[activeParagraph]
+    let modelData = chapterList[activeChapter]
     let paragraphs = modelData.paragraphs
     const input = this.refs[activeChapter + ' ' + activeParagraph]
     const addStart = input.selectionStart
@@ -207,11 +209,9 @@ class CowEditor extends Component {
       title: '',
       context: '' + Math.random()
     })
-    modelData = Object.assign({}, {
-      paragraphs
-    })
+    modelData.paragraphs = paragraphs
     debugger
-    chapterList[activeChapter].paragraphs = modelData
+    chapterList[activeChapter] = modelData
     this.setState({
       chapterList
     })
