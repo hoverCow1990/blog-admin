@@ -64,7 +64,7 @@ class CowEditor extends Component {
           <div className="article-admin-title"><Icon type="file-text" />文章内容</div>
           <ul className="article-admin-tool">
             <li onClick={() => this.showPerviewerModal()}><Icon type="heart" /><span>前瞻部分</span></li>
-            <li onClick={() => this.showChapterModal()}><Icon type="tag" /><span>段落</span></li>
+            <li onClick={() => this.showChapterModal()}><Icon type="tag" /><span>段落1</span></li>
           </ul>
         </div>
         <div className="article-main">
@@ -110,15 +110,13 @@ class CowEditor extends Component {
   renderChapterModel () {
     let { chapterList, activeChapter } = this.state
     let modelData = chapterList[activeChapter]
-    console.log(chapterList, activeChapter)
-    console.log(modelData)
     let paragraphDom = modelData.paragraphs.map((item, index) => (
       <li key={index}>
         <div className="item-hd">
           <p>{ '' + Math.ceil((index + 1)/ 10) + '.' + index % 10 + ' ' + item.title}</p>
           <div className="item-tool">
             <Icon type="copy" onClick={() => this.showTagEditor('p', index)}/>
-            <Icon type="picture" />
+            <Icon type="picture" onClick={() => this.showTagEditor('img', index)}/>
             <Icon type="code-o" />
             <Icon type="link" />
             <Icon type="up-circle" onClick={() => this.exchangeParagraph(index, 'up')}/>
@@ -127,7 +125,7 @@ class CowEditor extends Component {
           </div>
         </div>
         <div className="item-bd">
-          <input type="text" onClick={() => this.handlerChangeActiveParagraph(index)} onChange={e => this.handlerParagraphValChange(e, index)} ref={ activeChapter + ' ' + index }/>
+          <input type="text" value={item.context} onClick={() => this.handlerChangeActiveParagraph(index)} onChange={e => this.handlerParagraphValChange(e, index)} ref={ activeChapter + ' ' + index }/>
         </div>
       </li>
     ))
@@ -149,7 +147,7 @@ class CowEditor extends Component {
   showTagEditor (tagEditorType, index) {
     this.setState({
       tagEditorType,
-      activeItem: index,
+      activeParagraph: index,
       isTagEditorVisiable: true
     })
   }
@@ -159,23 +157,19 @@ class CowEditor extends Component {
       isTagEditorVisiable: false
     })
   }
-  // 鼠标点击
+  // 鼠标点击切换焦点段落
   handlerChangeActiveParagraph (index) {
     this.setState({
       activeParagraph: index
     })
   }
-  // 处理该激活段落的对应小节的input改变事件
+  // 处理该激活段落的对应小节的input值改变事件
   handlerParagraphValChange (e, index) {
     let val = e.target.value
     let { chapterList, activeChapter, activeParagraph } = this.state
     let modelData = chapterList[activeChapter]
     let paragraphs = modelData.paragraphs
     paragraphs[activeParagraph].context = val
-    modelData = Object.assign({}, {
-      paragraphs
-    })
-    chapterList[activeParagraph] = modelData
     this.setState({
       chapterList
     })
@@ -190,14 +184,9 @@ class CowEditor extends Component {
     const lastVal = input.value
     const newVal = lastVal.substring(0, addStart) + data.value + lastVal.substring(addStart)
     paragraphs[activeParagraph].context = newVal
-    modelData = Object.assign({}, {
-      paragraphs
-    })
-    chapterList[activeParagraph] = modelData
     this.setState({
       chapterList
     })
-    this.refs[activeChapter + ' ' + activeParagraph].value = newVal
     this.hiddenTagEditor()
   }
   // 增加一个段落
@@ -209,27 +198,16 @@ class CowEditor extends Component {
       title: '',
       context: '' + Math.random()
     })
-    modelData.paragraphs = paragraphs
-    debugger
-    chapterList[activeChapter] = modelData
     this.setState({
       chapterList
     })
   }
   // 删除一个段落
   removeParagraph (index) {
-    console.log(index)
     let { chapterList, activeChapter } = this.state
     let modelData = chapterList[activeChapter]
     let paragraphs = modelData.paragraphs
-    debugger
-    console.log(paragraphs)
     paragraphs.splice(index, 1)
-    debugger
-    modelData = Object.assign({}, {
-      paragraphs
-    })
-    chapterList[activeChapter] = modelData
     this.setState({
       chapterList
     })
@@ -242,14 +220,9 @@ class CowEditor extends Component {
     let changeParagraph = paragraphs[index]
     let beChengeNum = type === 'up' ? index - 1 : index + 1
     let beChengeParagraph = paragraphs[beChengeNum]
-    if (beChengeParagraph) {
-      paragraphs[index] = beChengeParagraph
-      paragraphs[beChengeNum] = changeParagraph
-    }
-    modelData = Object.assign({}, {
-      paragraphs
-    })
-    chapterList[activeChapter] = modelData
+    if (!beChengeParagraph) return
+    paragraphs[index] = beChengeParagraph
+    paragraphs[beChengeNum] = changeParagraph
     this.setState({
       chapterList
     })
