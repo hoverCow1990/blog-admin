@@ -41,9 +41,10 @@ class CowEditor extends Component {
         downLoadLink: '', //下载链接地址
         info: ''  // 前瞻简介
       },
+      mainContext: '',
       chapterVisible: false, // 章节弹窗是否显示
       chapterList: [{ // 章节的所有内容列表
-        title: '',
+        title: '项目简介',
         paragraphs: [{  // 每个章节的段落项
           title: '',
           context: ''
@@ -57,7 +58,7 @@ class CowEditor extends Component {
     }
   }
   render () {
-    const { preViewUploadProps, perviewerContext, isTagEditorVisiable, tagEditorType, perviewerVisible, chapterVisible } = this.state
+    const { preViewUploadProps, perviewerContext, isTagEditorVisiable, tagEditorType, perviewerVisible, chapterVisible, mainContext } = this.state
     return (
       <div className="cow-editor">
         <div className="article-context">
@@ -68,7 +69,10 @@ class CowEditor extends Component {
           </ul>
         </div>
         <div className="article-main">
-          <div className="article-box" dangerouslySetInnerHTML={{ __html: perviewerContext }}></div>
+          <div className="article-box">
+            <div className="article-perviewer" dangerouslySetInnerHTML={{ __html: perviewerContext }} onClick={() => this.showPerviewerModal()}></div>
+            <div id="context" className="article-context" dangerouslySetInnerHTML={{ __html: mainContext }}></div>
+          </div>
         </div>
         <Modal
           title="Add Perviewer"
@@ -117,7 +121,7 @@ class CowEditor extends Component {
           <div className="item-tool">
             <Icon type="copy" onClick={() => this.showTagEditor('p', index)}/>
             <Icon type="picture" onClick={() => this.showTagEditor('img', index)}/>
-            <Icon type="code-o" />
+            <Icon type="code-o" onClick={() => this.showTagEditor('code', index)}/>
             <Icon type="link" />
             <Icon type="up-circle" onClick={() => this.exchangeParagraph(index, 'up')}/>
             <Icon type="down-circle" onClick={() => this.exchangeParagraph(index, 'down')}/>
@@ -125,7 +129,7 @@ class CowEditor extends Component {
           </div>
         </div>
         <div className="item-bd">
-          <input type="text" value={item.context} onClick={() => this.handlerChangeActiveParagraph(index)} onChange={e => this.handlerParagraphValChange(e, index)} ref={ activeChapter + ' ' + index }/>
+          <textarea type="textarea" className="ant-input" value={item.context} onClick={() => this.handlerChangeActiveParagraph(index)} onChange={e => this.handlerParagraphValChange(e, index)} ref={ activeChapter + ' ' + index }/>
         </div>
       </li>
     ))
@@ -251,13 +255,6 @@ class CowEditor extends Component {
       perviewerVisible: false,
       perviewerContext
     })
-    setTimeout(() => {
-      document.getElementById('article-perviewer').onclick = () => {
-        this.setState({
-          perviewerVisible: true
-        })
-      }
-    }, 500)
   }
   // 获取节点类型前瞻节点
   getPerviewerDom (valObj) {
@@ -273,7 +270,26 @@ class CowEditor extends Component {
   }
   // 确定章节弹窗
   handleChapterOk () {
+    console.log(this.state.chapterList)
+    let context = this.state.chapterList.map((chapter, index) =>
+      `<div class="context-box">
+        <div class="box-hd red">
+          <span class="title">${chapter.title}</span>
+          <span class="tag">${index}</span>
+        </div>
+        <div class="box-bd">
+          ${
+            chapter.paragraphs.map((paragraph, index) => `
+              <div class="bd-para">
+                <div class="tip">1.1 ${paragraph.title}</div>
+                <div>${paragraph.context}</div>
+              </div>
+            `)
+          }
+        </div>
+      </div>`)
     this.setState({
+      mainContext: context,
       chapterVisible: false
     })
   }
