@@ -44,7 +44,7 @@ class CowEditor extends Component {
       mainContext: '',
       chapterVisible: false, // 章节弹窗是否显示
       chapterList: [{ // 章节的所有内容列表
-        title: '项目简介',
+        title: '',
         paragraphs: [{  // 每个章节的段落项
           title: '',
           context: ''
@@ -54,7 +54,6 @@ class CowEditor extends Component {
       activeParagraph: 0,  // 当前活动的段落信息
       isTagEditorVisiable: false, // 是否tag标签编辑器可见
       tagEditorType: '' // tag标签的类型 比如p 或是 image
-
     }
   }
   render () {
@@ -65,7 +64,8 @@ class CowEditor extends Component {
           <div className="article-admin-title"><Icon type="file-text" />文章内容</div>
           <ul className="article-admin-tool">
             <li onClick={() => this.showPerviewerModal()}><Icon type="heart" /><span>前瞻部分</span></li>
-            <li onClick={() => this.showChapterModal()}><Icon type="tag" /><span>段落1</span></li>
+            { this.renderChapterLi() }
+            <li onClick={() => this.addChapter()}><Icon type="plus-circle" /><span>增加段落</span></li>
           </ul>
         </div>
         <div className="article-main">
@@ -110,6 +110,17 @@ class CowEditor extends Component {
       </div>
     )
   }
+  renderChapterLi () {
+    return this.state.chapterList.map((item, index) => {
+      return (
+        <li key={index}
+          onClick={(e) => this.showChapterModal(e, index)}>
+            <span className="delete" onClick={e => this.deleteChapter(e, index)}><Icon type="plus-square" /></span>
+            <Icon type="tag" className="icon"/><span>段落{ index + 1}</span>
+        </li>
+      )
+    })
+  }
   // 渲染当前的ChapterModel 章节弹窗
   renderChapterModel () {
     let { chapterList, activeChapter } = this.state
@@ -117,7 +128,7 @@ class CowEditor extends Component {
     let paragraphDom = modelData.paragraphs.map((item, index) => (
       <li key={index}>
         <div className="item-hd">
-          <p>{ '' + Math.ceil((index + 1)/ 10) + '.' + index % 10 + ' ' + item.title}</p>
+          <p onClick={() => this.showTagEditor('title', index)}>{ '' + Math.ceil((index + 1)/ 10) + '.' + index % 10 + ' ' + item.title}</p>
           <div className="item-tool">
             <Icon type="copy" onClick={() => this.showTagEditor('p', index)}/>
             <Icon type="picture" onClick={() => this.showTagEditor('img', index)}/>
@@ -136,7 +147,7 @@ class CowEditor extends Component {
     return (
       <div className="editor-paragraph-model">
         <div className="paragraph-hd">
-          <Input placeholder="标题" size="large" ref="paragraphTitle"/>
+          <Input placeholder="标题" size="large" ref="paragraphTitle" onChange={e => this.setChapterTitle(e) }/>
           <div><Icon type="plus-square" onClick={() => this.addParagraph()}/></div>
         </div>
         <div className="paragraph-wrapper">
@@ -146,6 +157,27 @@ class CowEditor extends Component {
         </div>
       </div>
     )
+  }
+  // 设置段落标题
+  setChapterTitle (e) {
+    const val = e.target.value
+    let { chapterList, activeChapter } = this.state
+    chapterList[activeChapter].title = val
+    this.setState({
+      chapterList
+    })
+  }
+  // 删除段落
+  deleteChapter (e, index) {
+    e.stopPropagation()
+    let { chapterList } = this.state
+    if (chapterList.length === 1) return
+    chapterList.splice(index, 1)
+    this.setState({
+      chapterList,
+      activeChapter: 0
+    })
+    this.handleChapterOk()
   }
   // 显示编辑标签的弹窗
   showTagEditor (tagEditorType, index) {
@@ -183,18 +215,26 @@ class CowEditor extends Component {
     let { chapterList, activeChapter, activeParagraph } = this.state
     let modelData = chapterList[activeChapter]
     let paragraphs = modelData.paragraphs
-    const input = this.refs[activeChapter + ' ' + activeParagraph]
-    const addStart = input.selectionStart
-    const lastVal = input.value
-    const newVal = lastVal.substring(0, addStart) + data.value + lastVal.substring(addStart)
-    paragraphs[activeParagraph].context = newVal
-    this.setState({
-      chapterList
-    })
+    if (data.type === 'title') {
+      paragraphs[activeParagraph].title = data.value
+      this.setState({
+        chapterList
+      })
+    } else { // p标签 code img
+      const input = this.refs[activeChapter + ' ' + activeParagraph]
+      const addStart = input.selectionStart
+      const lastVal = input.value
+      const newVal = lastVal.substring(0, addStart) + data.value + lastVal.substring(addStart)
+      paragraphs[activeParagraph].context = newVal
+      this.setState({
+        chapterList
+      })
+    }
     this.hiddenTagEditor()
   }
   // 增加一个段落
-  addParagraph () {
+  addParagraph (e) {
+    if (e.target.class === 'delete') return
     let { chapterList, activeChapter } = this.state
     let modelData = chapterList[activeChapter]
     let paragraphs = modelData.paragraphs
@@ -203,7 +243,23 @@ class CowEditor extends Component {
       context: '' + Math.random()
     })
     this.setState({
-      chapterList
+      chapterList,
+      activeParagraph: paragraphs.length - 1
+    })
+  }
+  // 增加一个段落
+  addChapter () {
+    const chapterList = this.state.chapterList
+    chapterList.push({ // 章节的所有内容列表
+      title: '',
+      paragraphs: [{  // 每个章节的段落项
+        title: '',
+        context: ''
+      }]
+    })
+    this.setState({
+      chapterList,
+      activeChapter: chapterList.length - 1
     })
   }
   // 删除一个段落
@@ -263,14 +319,18 @@ class CowEditor extends Component {
     })
   }
   // 显示章节弹窗
-  showChapterModal = () => {
+  showChapterModal = (e, index) => {
+    const { paragraphTitle } = this.refs
+    if (paragraphTitle) {
+      paragraphTitle.refs.input.value = this.state.chapterList[index].title
+    }
     this.setState({
-      chapterVisible: true
+      chapterVisible: true,
+      activeChapter: index
     })
   }
   // 确定章节弹窗
   handleChapterOk () {
-    console.log(this.state.chapterList)
     let context = this.state.chapterList.map((chapter, index) =>
       `<div class="context-box">
         <div class="box-hd red">

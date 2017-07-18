@@ -16,6 +16,7 @@
     border-radius: 3px;
     line-height: 35px;
     li {
+      position: relative;
       display: flex;
       padding-left: 15px;
       padding-right: 15px;
@@ -27,6 +28,23 @@
       cursor: pointer;
       .border(right);
     }
+    .delete {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      right: 0;
+      top:-15px;
+      color: @red;
+      opacity: 0;
+      transform: scale(0);
+      transition: .2s;
+    }
+    &:hover {
+      .delete {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
     i {
       padding-right: 5px;
       &.anticon-heart {
@@ -34,6 +52,10 @@
       }
       &.anticon-tag {
         color: #108ee9;
+      }
+      &.anticon-plus-circle {
+        font-size: 15px;
+        color: #38a06d;
       }
     }
   }
@@ -179,7 +201,7 @@
       position: absolute;
       content: '';
       width: 4px;
-      height: @size + 2;
+      height: @size;
       left: 0;
       top: 0;
     }

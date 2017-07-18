@@ -4,7 +4,8 @@ import {
   Icon,
   Upload,
   message,
-  Select
+  Select,
+  Input
 } from 'antd'
 import './tagEditor.less'
 
@@ -34,6 +35,8 @@ class TagEditor extends Component {
   // 渲染TagText
   renderTagText (type) {
     switch (type) {
+      case 'title':
+        return (<Input className="ant-input cowTag-titleInput" placeholder="标题" ref="title"/>)
       case 'p':
         return (<textarea type="textarea" placeholder="文章概要" className="ant-input cowTag-textArea" ref="textarea"/>)
       case 'img':
@@ -83,6 +86,9 @@ class TagEditor extends Component {
   }
   handlerTagEditorVal (type) {
     switch (type) {
+      case 'title':
+        this.handlerTitle()
+        break
       case 'p':
         this.handlerPval()
         break
@@ -92,6 +98,13 @@ class TagEditor extends Component {
       default:
         return ''
     }
+  }
+  handlerTitle () {
+    const value = this.refs.title.refs.input.value
+    this.props.submitTagEditor({
+      type: 'title',
+      value
+    })
   }
   handlerPval () {
     const val = this.refs.textarea.value
@@ -127,7 +140,6 @@ class TagEditor extends Component {
           </div>
         </li>`
     })
-    console.log(context)
     return '<div class="cow-code"><ul>' + context + '</ul></div>'
   }
   // 处理js细节代码
