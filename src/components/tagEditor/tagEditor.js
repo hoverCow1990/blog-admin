@@ -144,10 +144,14 @@ class TagEditor extends Component {
   }
   // 处理js细节代码
   getJsCode (code) {
+    console.log(code)
     return code
     .replace(/`/, '<span>`</span>')
     .replace(/("([^\\"\n]|\\.)*"|'([^\\"\n]|\\.)*'|\/.+\/)/, $0 => {
       return '<span class="yellow">' + $0 + '</span>'
+    })
+    .replace(/(<|>)/g, $0 => {
+      return '<code class="red">' + $0 + '</code>'
     })
     .replace(/((const|var|function|let|class|extends)\s|(Math|Array|Symbol|Object)\.|\.(slice|split|call|bind|apply|push|pop|unshift|concat|forEach|map|reduce|some|join|add|prototype|__proto__|getElementById|getClassName|queryselectorAll|hasOwnProperty|match|assign|ajax|repeat|padStart|padEnd|indexOf)|document|window|solve|reject|resolve)/g, $0 => {
       var word = $0.match(/\w+/)[0]
