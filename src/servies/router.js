@@ -10,6 +10,7 @@ import CategoryView from '@/views/category/category'
 import SideNavView from '@/views/sideNav/sideNav'
 import ArticleListView from '@/views/articleList/articleList'
 import ArticleView from '@/views/article/article'
+import MessageBoard from '@/views/messageBoard/messageBoard'
 
 const history = createHashHistory()
 
@@ -24,6 +25,7 @@ class MainRouter extends Component {
             <CowRoute path="/main/category" component={CategoryView}/>
             <CowRoute path="/main/articleList"  component={ArticleListView}/>
             <CowRoute path="/main/article"  component={ArticleView}/>
+            <CowRoute path="/main/messageBoard"  component={MessageBoard}/>
           </div>
         </Router>
       )
