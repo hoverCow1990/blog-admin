@@ -7,11 +7,11 @@ import {
   Modal,
   Icon
 } from 'antd'
-import './messageBoard.less'
+import './messageArticle.less'
 
 const confirm = Modal.confirm
 
-class MessageBoard extends Component {
+class MessageArticle extends Component {
   constructor() {
     super()
     this.state = {
@@ -20,7 +20,11 @@ class MessageBoard extends Component {
       columns: [{
         title: '用户名',
         dataIndex: 'name',
-        width: 150,
+        width: 120,
+      }, {
+        title: '评论文章',
+        dataIndex: 'article',
+        width: 200,
       }, {
         title: '留言内容',
         dataIndex: 'content',
@@ -29,26 +33,28 @@ class MessageBoard extends Component {
         key: 0,
         id: 0,
         name: 'cow',
+        article: 'es6新语法',
         content: '你好牛逼啊'
       }, {
         key: 1,
         id: 1,
         name: 'cow',
+        article: 'javascript你不知道的秘密',
         content: '你好牛逼啊'
       }, {
         key: 2,
         id: 2,
         name: 'danian',
+        article: '大年是个2货',
         content: '你好牛逼啊'
       }, {
         key: 3,
         id: 3,
         name: '小伙子',
+        article: 'ps的神奇用法',
         content: '我是傻逼'
       }]
     }
-  }
-  componentWillMount() {
   }
   render() {
     const { selectedRowKeys, columns } = this.state
@@ -61,7 +67,7 @@ class MessageBoard extends Component {
     return (
       <div className = "admin-messageBoard admin-container" >
         <div className="category-title admin-title">
-          <p><Icon type="solution" />留言板评论</p>
+          <p><Icon type="solution" />文章页评论</p>
         </div>
         <div style={{ marginBottom: 16 }}>
           <span style={{ marginLeft: 5 }}>
@@ -95,4 +101,4 @@ class MessageBoard extends Component {
   }
 }
 
-export default MessageBoard;
+export default MessageArticle
