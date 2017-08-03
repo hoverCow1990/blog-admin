@@ -31,12 +31,11 @@ class SideNav extends Component {
             <Menu.Item key="category">网站栏目管理</Menu.Item>
             <Menu.Item key="articleList">文章列表</Menu.Item>
             <Menu.Item key="article">新增 / 修改文章</Menu.Item>
-            <Menu.Item key="file">上传文件</Menu.Item>
             <Menu.Item key="hotKey">热门关键词</Menu.Item>
           </SubMenu>
           <SubMenu key="sub2" title={<span><Icon type="edit" /><span>Comment</span></span>}>
             <Menu.Item key="messageBoard">留言板评论</Menu.Item>
-            <Menu.Item key="messageArtcle">文章页评论</Menu.Item>
+            <Menu.Item key="messageArticle">文章页评论</Menu.Item>
           </SubMenu>
           <SubMenu key="sub3" title={<span><Icon type="user-add" /><span>Member</span></span>}>
             <Menu.Item key="number">会员积分</Menu.Item>
@@ -77,10 +76,9 @@ class SideNav extends Component {
      case 'articleList':
      case 'article':
      case 'hotKey':
-     case 'file':
        return 'sub1'
      case 'messageBoard':
-     case 'messageArtcle':
+     case 'messageArticle':
        return 'sub2'
      case 'number':
      case 'numberDemo':
