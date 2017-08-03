@@ -110,6 +110,7 @@ class CowEditor extends Component {
       </div>
     )
   }
+  // 渲染段落一 二的按钮
   renderChapterLi () {
     return this.state.chapterList.map((item, index) => {
       return (
@@ -234,13 +235,12 @@ class CowEditor extends Component {
   }
   // 增加一个段落
   addParagraph (e) {
-    if (e.target.class === 'delete') return
     let { chapterList, activeChapter } = this.state
     let modelData = chapterList[activeChapter]
     let paragraphs = modelData.paragraphs
     paragraphs.push({
       title: '',
-      context: '' + Math.random()
+      context: ''
     })
     this.setState({
       chapterList,
