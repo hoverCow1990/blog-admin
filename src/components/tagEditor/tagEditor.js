@@ -156,17 +156,15 @@ class TagEditor extends Component {
       let before = beforeSymbol ? beforeSymbol[0] : ''
       return before + '<code class="yellow">' + word + '</code>'
     })
-    .replace(/<(.{4})/g, ($0, $1) => {
-      if (/code/.test($1) || /^<\//.test($1)) return $0
-      debugger
+    .replace(/<(.{1,4})/g, ($0, $1) => {
+      if (/code/.test($1) || /^<\/cod/.test($0)) return $0
       return '<code class="red"><</code>' + $1
     })
-    .replace(/(.{4})>/g, ($0, $1) => {
+    .replace(/(.{1,4})>/g, ($0, $1) => {
       if (/code/.test($1) || /"$/.test($1)) return $0
-      debugger
       return $1 + '<code class="red">></code>'
     })
-    .replace(/((const|var|function|let|class|extends)\s|(Math|Array|Symbol|Object)\.|\.(slice|split|call|bind|apply|push|pop|unshift|concat|forEach|map|reduce|some|join|add|random|prototype|__proto__|getElementById|getClassName|queryselectorAll|hasOwnProperty|match|assign|ajax|repeat|padStart|padEnd|indexOf)|document|window|solve|reject|resolve)/g, $0 => {
+    .replace(/((const|var|function|let|class|extends)\s|(Math|Array|Symbol|Object)\.|\.(apply|slice|split|call|bind|apply|push|pop|unshift|concat|forEach|map|reduce|some|join|add|random|prototype|__proto__|getElementById|getClassName|queryselectorAll|hasOwnProperty|match|assign|ajax|repeat|padStart|padEnd|indexOf)|document|window|solve|reject|resolve)/g, $0 => {
       var word = $0.match(/\w+/)[0]
       var beforeSymbol = $0.match(/^\W/)
       var afterSymbol = $0.match(/\W$/)
@@ -174,18 +172,21 @@ class TagEditor extends Component {
       var after = afterSymbol ? afterSymbol[0] : ''
       return before + '<code class="blue">' + word + '</code>' + after
     })
-    .replace(/((if|for|super)(\s|\()|else(\s|\{)|(return|break)(\s|;)|(export|new|continue|default|delete|throw|while|typeof|switch|try|instanceof|in|do|with|catch|import)\s|this(\.|\s))/g, $0 => {
+    .replace(/((if|for|super)(\s|\()|else(\s|\{)|(return|break)(\s|;)|(export|new|continue|default|delete|throw|while|typeof|switch|try|instanceof|with|catch|import)\s|this(\.|\s)\s)/g, $0 => {
       var word = $0.match(/\w+/)[0]
       var symbol = $0.match(/\W/)[0] || ''
       return '<code class="red">' + word + '</code>' + symbol
     })
-    .replace(/(\s(\$|=>|>=|!==|<=|%|\*|\+|-|\/|\||\|\||&|&&|\?)\s|((\+|-){2})|\s={1,3})/g, $0 => {
-      return '<code class="red">' + $0 + '</code>'
-    })
-    .replace(/\/\/.+$/, $0 => {
+    .replace(/(\/\/.+|\/\*.?)$/, $0 => {
       return '<code class="grey">' + $0 + '</code>'
     })
-    .replace(/(null|undefined)/g, $0 => {
+    .replace(/^(\s?\*|\s\*\/).+$/, $0 => {
+      return '<code class="grey">' + $0 + '</code>'
+    })
+    .replace(/(\s(\$|=>|>=|!==|<=|%|\*|\+|-|\/|\||\|\||&|&&|\?|\:|in|do)\s|((\+|-){2})|\s={1,3}|\$)/g, $0 => {
+      return '<code class="red">' + $0 + '</code>'
+    })
+    .replace(/(null|undefined|true|false)/g, $0 => {
       return '<code class="violet">' + $0 + '</code>'
     })
     .replace(/\W\d+/g, $0 => {

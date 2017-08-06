@@ -38,8 +38,8 @@ class SideNav extends Component {
             <Menu.Item key="messageArticle">文章页评论</Menu.Item>
           </SubMenu>
           <SubMenu key="sub3" title={<span><Icon type="user-add" /><span>Member</span></span>}>
-            <Menu.Item key="number">会员积分</Menu.Item>
-            <Menu.Item key="numberDemo">会员作品审核</Menu.Item>
+            <Menu.Item key="member">会员积分</Menu.Item>
+            <Menu.Item key="memberDemo">会员作品审核</Menu.Item>
           </SubMenu>
           <SubMenu key="sub4" title={<span><Icon type="rocket" /><span>Game</span></span>}>
             <Menu.Item key="game">游戏管理</Menu.Item>
@@ -80,8 +80,8 @@ class SideNav extends Component {
      case 'messageBoard':
      case 'messageArticle':
        return 'sub2'
-     case 'number':
-     case 'numberDemo':
+     case 'member':
+     case 'memberDemo':
        return 'sub3'
      case 'game':
        return 'sub4'

@@ -12,6 +12,7 @@ import ArticleListView from '@/views/articleList/articleList'
 import ArticleView from '@/views/article/article'
 import MessageBoard from '@/views/messageBoard/messageBoard'
 import MessageArticle from '@/views/messageArticle/messageArticle'
+import Member from '@/views/member/member'
 
 const history = createHashHistory()
 
@@ -28,6 +29,7 @@ class MainRouter extends Component {
             <CowRoute path="/main/article"  component={ArticleView}/>
             <CowRoute path="/main/messageBoard"  component={MessageBoard}/>
             <CowRoute path="/main/messageArticle"  component={MessageArticle}/>
+            <CowRoute path="/main/member"  component={Member}/>
           </div>
         </Router>
       )
