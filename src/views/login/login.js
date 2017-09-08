@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Form, Icon, Input, Button, Checkbox } from 'antd'
+import axios from 'axios'
 import './login.less'
 
 const FormItem = Form.Item;
@@ -14,7 +15,18 @@ class NormalLoginForm extends React.Component {
   }
   requestLogin (values) {
     const {userName, password, remember} = values
-    this.props.linkToCateGory()
+    console.log(userName, password, remember)
+    axios({
+      url: '/proxy/devApi/backUser/login',
+      method: 'POST',
+      data: {
+        name: userName,
+        password
+      }
+    }).then(res => {
+      console.log(res)
+    })
+    // this.props.linkToCateGory()
   }
   render() {
     const { getFieldDecorator } = this.props.form;

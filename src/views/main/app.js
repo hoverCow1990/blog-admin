@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import MainRouter from '@/servies/router'
-import './app.less';
+import './app.less'
 
 class App extends Component {
   constructor () {
