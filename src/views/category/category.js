@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import $Constant from '@/config/constant'
 import {
   Icon,
   Button,
@@ -135,7 +134,7 @@ class Category extends Component {
   }
   // 顶级菜单的渲染
   renderPanelList () {
-    let renderListDetail = this.renderListDetail
+    let renderListDetail = this.renderListDetail.bind(this)
     return this.state.categoryList.map(item => (
       <Panel header={item.title} key={item.id}>
         <ul className="category-list">
@@ -149,7 +148,7 @@ class Category extends Component {
   }
   // 二级菜单的渲染
   renderListDetail (item) {
-    let {homePage} = $Constant.URL
+    let {homePage} = this.$Constant.URL
     return item.map(item => (
       <li key={item.id}>
         <p className="tag">{item.title}</p>

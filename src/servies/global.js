@@ -1,3 +1,4 @@
+import React from 'react'
 import 'antd/lib/button/style'
 import 'antd/lib/icon/style'
 import 'antd/lib/form/style'
@@ -14,3 +15,8 @@ import 'antd/lib/pagination/style'
 import 'antd/lib/table/style'
 import '@/assets/css/reset.css'
 import '@/assets/css/global.less'
+import $Constant from '@/config/constant'
+import $Http from './http.js'
+
+React.Component.prototype.$Constant = $Constant
+React.Component.prototype.$Http = $Http

@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import $Constant from '@/config/constant'
 import TagEditor from '@/components/tagEditor/tagEditor'
 import {
   Icon,
@@ -314,7 +313,7 @@ class CowEditor extends Component {
   }
   // 获取节点类型前瞻节点
   getPerviewerDom (valObj) {
-    return $Constant.TEMPLATE.perviewer.replace(/\{\{\s.+\s\}\}/g, $0 => {
+    return this.$Constant.TEMPLATE.perviewer.replace(/\{\{\s.+\s\}\}/g, $0 => {
       return valObj[$0.match(/\w+/g)[0]]
     })
   }

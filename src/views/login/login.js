@@ -1,6 +1,12 @@
 import React, { Component } from 'react'
-import { Form, Icon, Input, Button, Checkbox } from 'antd'
-import axios from 'axios'
+import {
+  Form,
+  Icon,
+  Input,
+  Button,
+  Checkbox,
+  message
+} from 'antd'
 import './login.less'
 
 const FormItem = Form.Item;
@@ -15,8 +21,7 @@ class NormalLoginForm extends React.Component {
   }
   requestLogin (values) {
     const {userName, password, remember} = values
-    console.log(userName, password, remember)
-    axios({
+    this.$Http({
       url: '/proxy/devApi/backUser/login',
       method: 'POST',
       data: {
@@ -25,8 +30,13 @@ class NormalLoginForm extends React.Component {
       }
     }).then(res => {
       console.log(res)
+      if (res.statue) {
+        message.success(`登陆成功`)
+        this.props.linkToCateGory()
+      } else {
+        message.error(res.msg)
+      }
     })
-    // this.props.linkToCateGory()
   }
   render() {
     const { getFieldDecorator } = this.props.form;
