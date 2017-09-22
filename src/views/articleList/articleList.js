@@ -154,7 +154,17 @@ class ArticleList extends Component {
         <div className="article-update">{item.time}</div>
         <div className="article-watch">{item.watch}</div>
         <div className="article-message">{item.message}</div>
-        <div className="article-control"><Icon type="edit" onClick={() => this.linkToArticle(item.id)} /><Icon type="paper-clip" /><Icon type="close-circle" onClick={() => this.deleteArticle(item.title)}/></div>
+        <div className="article-control">
+          <div className="control-btn" onClick={() => this.linkToArticle(item.id)}>
+            <img src={require("./images/3.png")} alt="" />
+          </div>
+          <div className="control-btn" onClick={() => this.linkToView(item.title)}>
+            <img src={require("./images/5.png")}  alt="" />
+          </div>
+          <div className="control-btn" onClick={() => this.deleteArticle(item.title)}>
+            <img src={require("./images/1.png")}  alt="" />
+          </div>
+        </div>
       </li>
     ))
   }

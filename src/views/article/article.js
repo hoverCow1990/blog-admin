@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
 import CowSelectBox from '@/components/cowSelectBox/cowSelectBox'
 import CowEditor from '@/components/cowEditor/cowEditor'
+import CowUpload from '@/components/cowUpload/cowUpload'
 import {
   Icon,
   Button,
-  Modal,
   Input,
   message,
-  Select,
-  Upload
+  Select
 } from 'antd'
 import './article.less'
 
@@ -19,96 +18,22 @@ class Article extends Component {
     super()
     this.state = {
       articleId: 0, // 0为新增文章 其他为旧文章用来修改的
-      categoryList: [{
-          title: 'javascript',
-          id: 1,
-          childrens: [{
-              title: 'vue',
-              id: 2
-            }, {
-              title: 'angular',
-              id: 3
-            }, {
-              title: 'react',
-              id: 4
-            }, {
-              title: 'backbone',
-              id: 5
-            }, {
-              title: 'es6',
-              id: 6
-            }, {
-              title: 'jquery',
-              id: 7
-            }, {
-              title: 'backbone',
-              id: 8
-            }]
-      }, {
-          title: 'html',
-          id: 9,
-          childrens: [{
-              title: 'html',
-              id: 10
-            }, {
-              title: 'less',
-              id: 11
-            }, {
-              title: 'sass',
-              id: 12
-            }, {
-              title: 'BootsTrip',
-              id: 23
-            }]
-      }, {
-          title: 'node/java',
-          id: 13,
-          childrens: [{
-              title: 'http',
-              id: 14
-            }, {
-              title: 'node',
-              id: 15
-            }, {
-              title: 'java',
-              id: 16
-            }, {
-              title: 'php',
-              id: 18
-            }]
-      }, {
-          title: 'others',
-          id: 19,
-          childrens: [{
-              title: 'photoshop',
-              id: 20
-            }, {
-              title: 'dede',
-              id: 21
-            }, {
-              title: 'tool',
-              id: 22
-            }]
-      }],
+      categoryList: [],
       articleInner: {
         title: '',
         weight: 0,
         mainType: '',
+        keyWords: '',
+        description: '',
+        smallPerviewer: '',
         secondType: []
       },
       uploadProps: {
         name: 'file',
-        action: '//jsonplaceholder.typicode.com/posts/',
-        headers: {
-          authorization: 'authorization-text',
-        }
-      }
+        action: this.$Constant.API.artcle.uploadImg
+      },
+      initContext: ''
     }
-  }
-  componentWillMount () {
-    const search = this.props.history.location.search
-    const id = search.match(/\=(\d+)$/)[1]
-    this.initialState(id)
   }
   render () {
     let renderMainTypeOptions = this.renderMainTypeOptions()
@@ -127,19 +52,19 @@ class Article extends Component {
               <li>
                 <span className="tag">标题</span>
                 <div className="list-context">
-                  <Input placeholder="文章标题" />
+                  <Input placeholder="文章标题" value={this.state.articleInner.title} ref="title" onChange={(e) => this.handlerInputVal(e, 'title')}/>
                 </div>
               </li>
               <li>
                 <span className="tag">关键词</span>
                 <div className="list-context">
-                  <Input placeholder="关键词用于被搜索" />
+                  <Input placeholder="关键词用于被搜索两两之间用;分割"  value={this.state.articleInner.keyWords} ref="keyWords" onChange={(e) => this.handlerInputVal(e, 'keyWords')}/>
                 </div>
               </li>
               <li>
                 <span className="tag">主栏目</span>
                 <div className="list-context">
-                  <Select placeholder="文章的主要栏目">
+                  <Select placeholder="文章的主要栏目" value={this.state.articleInner.mainType} onChange={value => this.setArticleInner('mainType', value)}>
                     { renderMainTypeOptions }
                   </Select>
                 </div>
@@ -147,47 +72,33 @@ class Article extends Component {
               <li>
                 <span className="tag">权重数</span>
                 <div className="list-context">
-                  <Input placeholder="数字越高排名越前" />
+                  <Input placeholder="数字越高排名越前"  value={this.state.articleInner.weight} ref="weight" onChange={(e) => this.handlerInputVal(e, 'weight')} />
                 </div>
               </li>
               <li className="maxWidth">
                 <span className="tag">副栏目</span>
                 <div className="list-context">
-                  <CowSelectBox categoryList={categoryList} onChangeSelect={(val, id) => this.handlerTypeSelect(val, id)}/>
+                  <CowSelectBox  value={this.state.articleInner.secondType} categoryList={categoryList} onChangeSelect={(val, id) => this.handlerTypeSelect(val, id)}/>
                 </div>
               </li>
               <li className="maxWidth pic">
                 <span className="tag">缩略图</span>
                 <div className="list-context">
-                  <Upload {...uploadProps}>
-                    <Button>
-                      <Icon type="upload" /> Click to Upload
-                    </Button>
-                  </Upload>
+                  <CowUpload {...uploadProps} success={(res) => this.uploadSuccess(res)}/>
                 </div>
               </li>
               <li className="maxWidth maxHeight pic">
                 <span className="tag">概要</span>
                 <div className="list-context">
-                  <textarea type="textarea" placeholder="文章概要" className="ant-input" style={{height: '46px', minHeight: '46px', maxHeight: '118px'}}></textarea>
+                  <textarea type="textarea" placeholder="文章概要" className="ant-input" ref="description" value={this.state.articleInner.description} style={{height: '46px', minHeight: '46px', maxHeight: '118px'}} onChange={(e) => this.handlerInputVal(e, 'description')}></textarea>
                 </div>
               </li>
             </ul>
           </div>
-          <CowEditor />
+          <CowEditor ref="cowEditor" initContext={this.state.initContext}/>
         </div>
       </div>
     )
-  }
-  // 如果是0则是新增文章 不为0则发送请求该id文章的信息
-  initialState (id) {
-    if (id === 0) {
-      this.setState({
-        articleId: id
-      })
-    } else {
-      this.requestArticleInfo(id)
-    }
   }
   // 渲染可选的主要类别
   renderMainTypeOptions () {
@@ -195,25 +106,151 @@ class Article extends Component {
       <Option key={item.id} value={'' + item.id}>{item.title}</Option>
     ))
   }
+  componentWillMount () {
+    this.requestCategoryList()
+  }
+  // 请求所有类别
+  requestCategoryList () {
+    this.$Http({
+      url: this.$Constant.API.category.getList,
+      method: 'GET'
+    }).then(res => {
+      const search = this.props.history.location.search
+      const id = search.match(/=(\d+)$/)[1]
+      this.setState({
+        categoryList: res
+      })
+      this.initialState(id) // 请求文章
+    })
+  }
+  // 如果是0则是新增文章 不为0则发送请求该id文章的信息
+  initialState (id) {
+    this.setState({
+      articleId: id
+    })
+    if (id !== "0") {
+      this.requestArticleInfo(id)
+    }
+  }
+  // 请求已有的文章信息
+  requestArticleInfo (id) {
+    this.$Http({
+      url: this.$Constant.API.artcle.getArtcle,
+      method: 'GET',
+      params: {
+        id
+      }
+    }).then(res => {
+      this.initialArtcle(res)
+    })
+  }
+  // 查询旧文章后的初始化
+  initialArtcle (res) {
+    let {title, weight, mainType, keyWords, description, smallPerviewer, secondType, context} = res
+    secondType = secondType.split(',').map(item => Number(item))
+    mainType = this.state.categoryList.find(item => item.id === mainType).title
+    this.setState({
+      articleInner: {
+        title,
+        weight,
+        mainType,
+        keyWords,
+        description,
+        smallPerviewer,
+        secondType
+      },
+      initContext: context
+    })
+  }
+  // 处理input键入后改变值
+  handlerInputVal (e, key) {
+    let value = e.target.value
+    this.setArticleInner(key, value)
+  }
   // 组件内副栏目栏的select选择
   handlerTypeSelect (secondType) {
     this.setArticleInner('secondType', secondType)
   }
+  // 图片上传成功后的回调
+  uploadSuccess (res) {
+    if (res.statue) {
+      this.setArticleInner('smallPerviewer', res.url) // 缩列图的地址
+      message.success('缩略图上传成功')
+    } else {
+      message.error('缩略图上传失败')
+    }
+  }
   // 更新articleInner的内容
   setArticleInner (key, val) {
     let articleInner = Object.assign({}, this.state.articleInner, {
-      key: val
+      [key]: val
     })
     this.setState({
       articleInner
     })
   }
-  requestArticleInfo (id) {
-
-  }
   // 上传文章
   updataArticle () {
-
+    const search = this.props.history.location.search
+    const id = search.match(/=(\d+)$/)[1]
+    const {articleInner} = this.state
+    let cowEditorState = this.refs.cowEditor.state
+    let perviewer = cowEditorState.perviewerContext && id === '0' ? '<div class="article-perviewer">' + cowEditorState.perviewerContext + '</div>' : cowEditorState.perviewerContext
+    let mainContext = id === '0' ? '<div id="context" class="article-context hasDash">' + cowEditorState.mainContext + '</div>' : cowEditorState.mainContext
+    let context = perviewer + mainContext
+    let isCanSubmit = this.validateVal(articleInner)
+    let articleInnerData = Object.assign({}, articleInner, {
+      mainType: Number.isNaN(Number(articleInner.mainType)) ? this.state.categoryList.find(item => item.title === articleInner.mainType).id : articleInner.mainType
+    })
+    if (isCanSubmit.statue) {
+      this.$Http({
+        url: this.$Constant.API.artcle.upLoadArticle,
+        method: 'POST',
+        data: {
+          id,
+          articleInner: articleInnerData,
+          context: context.replace(/("|')/g, ($0, $1) => "\\" + $1)
+        }
+      }).then(res => {
+         message.success('文章提交成功')
+      })
+    } else {
+      message.error(isCanSubmit.msg)
+    }
+  }
+  // 验证是否可以提交
+  validateVal (articleInner) {
+    let {description, mainType, secondType, title, smallPerviewer} = articleInner
+    if (!title) {
+      return {
+        statue: false,
+        msg: '标题不能为空'
+      }
+    } else if (!mainType) {
+      return {
+        statue: false,
+        msg: '主栏目不能为空'
+      }
+    } else if (!secondType.length) {
+      return {
+        statue: false,
+        msg: '请选择副栏目'
+      }
+    } else if (!smallPerviewer) {
+      return {
+        statue: false,
+        msg: '请上传缩略图'
+      }
+    } else if (!description) {
+      return {
+        statue: false,
+        msg: '概要不能为空'
+      }
+    } else {
+      return {
+        statue: true
+      }
+    }
   }
 }
 

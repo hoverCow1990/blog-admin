@@ -66,7 +66,7 @@ class Nember extends Component {
             <li className="index">{ item.index }</li>
             <li className="feature">
               <div className="feature-container">
-                <img src={require("./images/user.jpg")} />
+                <img src={require("./images/user.jpg")} alt="" />
               </div>
             </li>
             <li className="name">{ item.name }</li>
@@ -77,12 +77,12 @@ class Nember extends Component {
   }
   // 改变值
   handlerValue (e, index) {
-    const val = e.target.value
-    this.state.memberList[index].score = val
-    this.setState({
-      memberList: this.state.memberList
-    })
-    this.recordChange(this.state.memberList[index].index)
+    // const val = e.target.value
+    // this.state.memberList[index].score = val
+    // this.setState({
+    //   memberList: this.state.memberList
+    // })
+    // this.recordChange(this.state.memberList[index].index)
   }
   // 记录变化的会员
   recordChange (index) {

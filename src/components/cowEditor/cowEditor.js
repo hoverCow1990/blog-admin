@@ -10,6 +10,8 @@ import {
 } from 'antd'
 import './cowEditor.less'
 
+const { TextArea } = Input
+
 // 老牛编辑器组件
 class CowEditor extends Component {
   constructor () {
@@ -38,6 +40,7 @@ class CowEditor extends Component {
         img: '', // 图
         demoLink: '', // 网站demo的链接
         downLoadLink: '', //下载链接地址
+        githubLink: '', // github下载地址
         info: ''  // 前瞻简介
       },
       mainContext: '',
@@ -52,14 +55,16 @@ class CowEditor extends Component {
       activeChapter: 0, // 当前活动的章节信息
       activeParagraph: 0,  // 当前活动的段落信息
       isTagEditorVisiable: false, // 是否tag标签编辑器可见
-      tagEditorType: '' // tag标签的类型 比如p 或是 image
+      tagEditorType: '', // tag标签的类型 比如p 或是 image
+      initContextSwitch: false,
+      initInfoSwitch: true
     }
   }
   render () {
-    const { preViewUploadProps, perviewerContext, isTagEditorVisiable, tagEditorType, perviewerVisible, chapterVisible, mainContext } = this.state
+    const { perviewerContext, isTagEditorVisiable, tagEditorType, perviewerVisible, chapterVisible, mainContext, perviewerVal } = this.state
     return (
       <div className="cow-editor">
-        <div className="article-context">
+        <div className="article-editTool">
           <div className="article-admin-title"><Icon type="file-text" />文章内容</div>
           <ul className="article-admin-tool">
             <li onClick={() => this.showPerviewerModal()}><Icon type="heart" /><span>前瞻部分</span></li>
@@ -69,8 +74,8 @@ class CowEditor extends Component {
         </div>
         <div className="article-main">
           <div className="article-box">
-            <div className="article-perviewer" dangerouslySetInnerHTML={{ __html: perviewerContext }} onClick={() => this.showPerviewerModal()}></div>
-            <div id="context" className="article-context" dangerouslySetInnerHTML={{ __html: mainContext }}></div>
+            <div id="article-perviewer" dangerouslySetInnerHTML={{ __html: perviewerContext }} onClick={() => this.showPerviewerModal()}></div>
+            <div id="context" className={perviewerContext ? "article-context hasDash" : "article-context"} dangerouslySetInnerHTML={{ __html: mainContext }}></div>
           </div>
         </div>
         <Modal
@@ -90,10 +95,10 @@ class CowEditor extends Component {
                 <Icon type="upload" /> 上传前瞻图
               </Button>
             </Upload>
-            <Input placeholder="地址链接" size="large" ref="demoLink"/>
-            <Input placeholder="下载地址" size="large" ref="downLoadLink"/>
-            <Input placeholder="github" size="large" ref="githubLink"/>
-            <Input type="textarea" ref="info" placeholder="文章简述" autosize={{ minRows: 4, maxRows: 6 }} />
+            <Input placeholder="地址链接" size="large" ref="demoLink" value={perviewerVal.demoLink} onChange={(e) => this.setPerviewerVal('demoLink', e)} />
+            <Input placeholder="下载地址" size="large" ref="downLoadLink" value={perviewerVal.downLoadLink} onChange={(e) => this.setPerviewerVal('downLoadLink', e)} />
+            <Input placeholder="github" size="large" ref="githubLink" value={perviewerVal.githubLink} onChange={(e) => this.setPerviewerVal('githubLink', e)} />
+            <Input type="textarea" ref="info" placeholder="文章简述" autosize={{ minRows: 4, maxRows: 6 }} value={perviewerVal.info}  onChange={(e) => this.setPerviewerVal('info', e)}/>
           </div>
         </Modal>
         <Modal
@@ -115,7 +120,9 @@ class CowEditor extends Component {
       return (
         <li key={index}
           onClick={(e) => this.showChapterModal(e, index)}>
-            <span className="delete" onClick={e => this.deleteChapter(e, index)}><Icon type="plus-square" /></span>
+            <span className="delete" onClick={e => this.deleteChapter(e, index)}>
+              <img src={require('./images/1.png')} alt="" />
+            </span>
             <Icon type="tag" className="icon"/><span>段落{ index + 1}</span>
         </li>
       )
@@ -128,15 +135,29 @@ class CowEditor extends Component {
     let paragraphDom = modelData.paragraphs.map((item, index) => (
       <li key={index}>
         <div className="item-hd">
-          <p onClick={() => this.showTagEditor('title', index)}>{ '' + Math.ceil((index + 1)/ 10) + '.' + index % 10 + ' ' + item.title}</p>
+          <p onClick={() => this.showTagEditor('title', index)}>{ this.getParaNum(index) + ' : ' + item.title }</p>
           <div className="item-tool">
-            <Icon type="copy" onClick={() => this.showTagEditor('p', index)}/>
-            <Icon type="picture" onClick={() => this.showTagEditor('img', index)}/>
-            <Icon type="code-o" onClick={() => this.showTagEditor('code', index)}/>
-            <Icon type="link" />
-            <Icon type="up-circle" onClick={() => this.exchangeParagraph(index, 'up')}/>
-            <Icon type="down-circle" onClick={() => this.exchangeParagraph(index, 'down')}/>
-            <Icon type="close-circle" onClick={() => this.removeParagraph(index)}/>
+            <div className="tool-icon"  onClick={() => this.showTagEditor('p', index)}>
+              <img src={require('./images/text2.png')} alt="" />
+            </div>
+            <div className="tool-icon" onClick={() => this.showTagEditor('img', index)}>
+              <img src={require('./images/pic.png')} alt="" />
+            </div>
+            <div className="tool-icon" onClick={() => this.showTagEditor('code', index)}>
+              <img src={require('./images/code.png')} alt="" />
+            </div>
+            <div className="tool-icon">
+              <img src={require('./images/link.png')} alt="" />
+            </div>
+            <div className="tool-icon" onClick={() => this.exchangeParagraph(index, 'up')}>
+              <img src={require('./images/up3.png')} alt="" />
+            </div>
+            <div className="tool-icon" onClick={() => this.exchangeParagraph(index, 'down')}>
+              <img src={require('./images/down3.png')} alt="" />
+            </div>
+            <div className="tool-icon" onClick={() => this.removeParagraph(index)}>
+              <img src={require('./images/1.png')} alt="" />
+            </div>
           </div>
         </div>
         <div className="item-bd">
@@ -147,8 +168,8 @@ class CowEditor extends Component {
     return (
       <div className="editor-paragraph-model">
         <div className="paragraph-hd">
-          <Input placeholder="标题" size="large" ref="paragraphTitle" onChange={e => this.setChapterTitle(e) }/>
-          <div><Icon type="plus-square" onClick={() => this.addParagraph()}/></div>
+          <Input placeholder="标题" size="large" ref="paragraphTitle" value={this.state.chapterList[this.state.activeChapter].title} onChange={e => this.setChapterTitle(e) }/>
+          <div className="add" onClick={e => this.addParagraph(e)}><Icon type="plus-circle-o" />增加</div>
         </div>
         <div className="paragraph-wrapper">
           <ul className="paragraph-list">
@@ -157,6 +178,80 @@ class CowEditor extends Component {
         </div>
       </div>
     )
+  }
+  componentWillReceiveProps (nextProps) {
+    if (this.state.initContextSwitch) return
+    if (nextProps.initContext) {
+      let {initContext} = nextProps
+      let perviewerContext = initContext.match(/([\s\S])*?<div class="context-box"/g)
+      let mainContext = initContext.match(/<div class="context-box">[\s\S]*/g)
+      perviewerContext = perviewerContext ? perviewerContext[0].replace(/<div class="context-box"$/, '') : ''
+      mainContext = mainContext ? mainContext[0] : ''
+      this.setState({
+        mainContext,
+        perviewerContext,
+        initContextSwitch: true,
+        initInfoSwitch: false
+      })
+    }
+  }
+  // 第一次加载已存在的文章(id !== 0)的初始化
+  componentDidUpdate () {
+    if (this.state.initInfoSwitch) return
+    this.initialPerviewer()
+    this.initialArtcle()
+  }
+  // 初始化前瞻部分Input值
+  initialPerviewer () {
+    let perviewerDom = document.getElementById('article-perviewer')
+    if (perviewerDom.innerHTML) {
+      let pImg = perviewerDom.getElementsByTagName('img')[0]
+      let pDemo = perviewerDom.getElementsByClassName('watch')[0]
+      let pDownload = perviewerDom.getElementsByClassName('download')[0]
+      let pGithub = perviewerDom.getElementsByClassName('github')[0]
+      let pDes = perviewerDom.getElementsByClassName('des')[0]
+      let img = pImg.src
+      let demoLink = pDemo.getElementsByTagName('a')[0].href
+      let downLoadLink = pDownload.getElementsByTagName('a')[0].href
+      let githubLink = pGithub.getElementsByTagName('a')[0].href
+      let info = pDes.innerText
+      let perviewerVal = {
+        img,
+        demoLink,
+        downLoadLink,
+        githubLink,
+        info
+      }
+      this.setState({
+        initInfoSwitch: true,
+        perviewerVal
+      })
+    }
+  }
+  initialArtcle () {
+    let mainDom = document.getElementsByClassName('context-box')
+    let chapterList = []
+    Array.from(mainDom).forEach((dom, index) => {
+      let hd = dom.children[0]
+      let bd = dom.children[1]
+      let title = hd.children[0].innerHTML
+      let para = bd.children
+      let paragraphs = []
+      Array.from(para).forEach(par => {
+        let item = {
+          title: par.children[0].innerHTML.replace(/^\d*\.\d*\s/, ''),
+          context: par.children[1].innerHTML
+        }
+        paragraphs.push(item)
+      })
+      chapterList.push({
+        title,
+        paragraphs
+      })
+    })
+    this.setState({
+      chapterList
+    })
   }
   // 设置段落标题
   setChapterTitle (e) {
@@ -266,6 +361,7 @@ class CowEditor extends Component {
     let { chapterList, activeChapter } = this.state
     let modelData = chapterList[activeChapter]
     let paragraphs = modelData.paragraphs
+    if (paragraphs.length === 1) return
     paragraphs.splice(index, 1)
     this.setState({
       chapterList
@@ -298,14 +394,26 @@ class CowEditor extends Component {
       perviewerVisible: false
     })
   }
+  setPerviewerVal (key, e) {
+    let value = e.target.value
+    let perviewerVal = Object.assign({}, this.state.perviewerVal, {
+      [key]: value
+    })
+    this.setState({
+      perviewerVal
+    })
+  }
   // 前瞻弹窗确定按钮
   handlePerviewerOk = e => {
     const templateImg = 'http://www.web-jackiee.com/uploads/allimg/170313/1-1F313043542922.jpg'
-    const templateDemo = this.refs.demoLink.refs.input.value
-    const templateDownload = this.refs.downLoadLink.refs.input.value
-    const templateGithub = this.refs.githubLink.refs.input.value
-    const templateInfo = this.refs.info.refs.input.value
-    const perviewerContext = this.getPerviewerDom({templateImg, templateDemo, templateDownload, templateGithub, templateInfo})
+    let {img, demoLink, downLoadLink, githubLink, info} = this.state.perviewerVal
+    const perviewerContext = this.getPerviewerDom({
+      templateImg: img,
+      templateDemo: demoLink,
+      templateDownload: downLoadLink,
+      templateGithub: githubLink,
+      templateInfo: info
+    })
     this.setState({
       perviewerVisible: false,
       perviewerContext
@@ -340,13 +448,13 @@ class CowEditor extends Component {
           ${
             chapter.paragraphs.map((paragraph, index) => `
               <div class="bd-para">
-                <div class="tip">1.1 ${paragraph.title}</div>
+                <div class="tip">${this.getParaNum(index)} ${paragraph.title}</div>
                 <div>${paragraph.context}</div>
               </div>
-            `)
+            `).join('')
           }
         </div>
-      </div>`)
+      </div>`).join('')
     this.setState({
       mainContext: context,
       chapterVisible: false
@@ -357,6 +465,10 @@ class CowEditor extends Component {
     this.setState({
       chapterVisible: false
     })
+  }
+  // 获取章节数
+  getParaNum (index) {
+    return '' + Math.ceil((index + 1)/ 10) + '.' + index % 10
   }
 }
 

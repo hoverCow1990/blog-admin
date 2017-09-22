@@ -1,9 +1,15 @@
 @import '../../assets/css/global.less';
 
+@id: 1;
+@title: 6;
+@update: 3;
+@message: 1;
+@watch: 1;
+@control: 3;
+
 .artcleList {
   .artcleList-topBar {
     display: flex;
-    justify-content: flex-end;
     padding-bottom: 10px;
     .topBar-container {
       width: 340px;
@@ -20,7 +26,7 @@
     border-radius: 3px;
     text-align: center;
     background-color: #fff;
-    .border();
+    .border(all, #f4f4f4);
   }
   .main-hd {
     display: flex;
@@ -33,31 +39,31 @@
       .border(right);
     }
     .hd-id {
-      flex: 1;
+      flex: @id;
     }
     .hd-title {
-      flex: 5;
+      flex: @title;
     }
     .hd-update {
-      flex: 3;
+      flex: @update;
     }
     .hd-message {
-      flex: 1;
+      flex: @message;
     }
     .hd-watch {
-      flex: 1;
+      flex: @watch;
     }
     .hd-control {
-      flex: 2;
+      flex: @control;
     }
   }
   .article-list {
     li {
       display: flex;
-      padding-top: 10px;
-      padding-bottom: 10px;
+      padding-top: 8px;
+      padding-bottom: 8px;
       font-size: 13px;
-      color: #232323;
+      color: #393939;
       &:hover {
         background-color: #f6f6f6;
       }
@@ -69,33 +75,37 @@
       }
     }
     .article-id {
-      flex: 1;
+      flex: @id;
     }
     .article-title {
-      flex: 5;
+      flex: @title;
     }
     .article-update {
-      flex: 3;
+      flex: @update;
     }
     .article-message {
-      flex: 1;
+      flex: @message;
     }
     .article-watch {
-      flex: 1;
+      flex: @watch;
     }
     .article-control {
-      flex: 2;
+      flex: @control;
     }
-    i {
-      padding-right: 18px;
+    .control-btn {
+      width: 18px;
+      height: 18px;
+      margin-left: 18px;
+      float: left;
       cursor: pointer;
-      transition: color .2s;
-      &:not(:last-child):hover {
-        color: @primary;
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
       }
       &:last-child {
         float: right;
-        color: #f34546;
+        margin-right: 18px;
       }
     }
   }

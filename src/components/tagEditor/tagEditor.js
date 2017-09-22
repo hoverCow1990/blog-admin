@@ -183,7 +183,7 @@ class TagEditor extends Component {
     .replace(/^(\s?\*|\s\*\/).+$/, $0 => {
       return '<code class="grey">' + $0 + '</code>'
     })
-    .replace(/(\s(\$|=>|>=|!==|<=|%|\*|\+|-|\/|\||\|\||&|&&|\?|\:|in|do)\s|((\+|-){2})|\s={1,3}|\$)/g, $0 => {
+    .replace(/(\s(\$|=>|>=|!==|<=|%|\*|\+|-|\/|\||\|\||&|&&|\?|:|in|do)\s|((\+|-){2})|\s={1,3}|\$)/g, $0 => {
       return '<code class="red">' + $0 + '</code>'
     })
     .replace(/(null|undefined|true|false)/g, $0 => {

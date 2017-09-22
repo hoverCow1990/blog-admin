@@ -1,6 +1,15 @@
+const ENV = 'dev'
+
+const HOST = {
+  dev: '/proxy/devApi/',
+  pro: 'http://web-jackiee.com/'
+}
+
+const HostUrl = HOST[ENV]
+
 const $Constant = {
   URL: {
-    homePage: 'http://www.web-jackiee.com'
+    homePage: 'http://localhost:3000'
   },
   TEMPLATE: {
     perviewer: `
@@ -27,6 +36,20 @@ const $Constant = {
           </a>
         </div>
       </div>`
+  },
+  API: {
+    user: {
+      login: HostUrl + 'backUser/login'
+    },
+    category: {
+      getList: HostUrl + 'backCategory/getList',
+      addCategory: HostUrl + 'backCategory/addCategory'
+    },
+    artcle: {
+      uploadImg: HostUrl + 'backArtcle/uploadImg',
+      upLoadArticle: HostUrl + 'backArtcle/upLoadArticle',
+      getArtcle: HostUrl + 'backArtcle/getArtcle'
+    }
   }
 }
 

@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import $Constant from '../config/constant.js'
 
 Axios.defaults.timeout = 30000
 
@@ -14,16 +15,6 @@ Axios.interceptors.request.use(config => {
 // 响应拦截器
 Axios.interceptors.response.use(result => {
   return result.data
-  // return {
-  //   body: result.data,
-  //   status: {
-  //     code: result.status,
-  //     message: result.statusText
-  //   },
-  //   headers (name) {
-  //     return result.request.getResponseHeader(name)
-  //   }
-  // }
 }, err => {
   // Vue.prototype.$Pulgin.loading.close()
   // if (!err.response) {
@@ -55,7 +46,7 @@ Axios.interceptors.response.use(result => {
   //     }
   //   }
   if ([403, 401].indexOf(err.response.status) !== -1) {
-    alert(1)
+    window.location = $Constant.URL.homePage
   }
   return Promise.reject(err)
 })

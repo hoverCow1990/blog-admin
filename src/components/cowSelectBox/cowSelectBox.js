@@ -14,6 +14,7 @@ class CowSelectBox extends Component {
       secondType: [], // 用于存副栏目的id 用于上传的
       secondTitle: [], // 用于存副栏目的title 渲染在input内
       handlerClickBlur: null,  // 用于存绑定this的input焦点消失用于组建销毁时注销window事件
+      inItSwitch: false // value只初始化一次
     }
   }
   componentDidMount () {
@@ -26,6 +27,31 @@ class CowSelectBox extends Component {
   }
   componentWillUnmount () {
     window.removeEventListener('click', this.state.handlerClickBlur)
+  }
+  componentWillReceiveProps (nextProps) {
+    if (this.state.inItSwitch) return
+    if (nextProps.value.length && nextProps.categoryList.length) {
+      this.setState({
+        secondType: nextProps.value,
+        secondTitle: this.getInitSecondTitle(nextProps.categoryList, nextProps.value),
+        inItSwitch: true
+      })
+    }
+  }
+  getInitSecondTitle (categoryList, value) {
+    let arr = []
+    for (let i = 0; i < categoryList.length; i++ ) {
+      if (value.indexOf(categoryList[i].id) > -1) {
+        arr.push(categoryList[i].title)
+      }
+      for (let j = 0; j < categoryList[i].childrens.length; j++) {
+        if (value.indexOf(categoryList[i].childrens[j].id) > -1) {
+          arr.push(categoryList[i].childrens[j].title)
+          break
+        }
+      }
+    }
+    return arr
   }
   buildHandlerClickBlur () {
     return e => {
@@ -63,22 +89,22 @@ class CowSelectBox extends Component {
   }
   // 渲染顶级type
   renderSelectCategory () {
-    const { categoryList } = this.props
+    const { categoryList, value } = this.props
     return categoryList.map(category => (
       <li className="category-context" key={category.id}>
-        <div className="top-type"><Checkbox onChange={(e) => this.onChangeSelect(e, {id:category.id, title:category.title})}>{ category.title }</Checkbox></div>
+        <div className="top-type"><Checkbox onChange={(e) => this.onChangeSelect(e, {id:category.id, title:category.title})} checked={value.indexOf(category.id) > -1}>{ category.title }</Checkbox></div>
         <ul className="type-context">
-          {this.renderSelectType(category.childrens)}
+          {this.renderSelectType(category.childrens, value)}
         </ul>
       </li>
     ))
   }
   // 渲染二级type
-  renderSelectType (childrens) {
+  renderSelectType (childrens, value) {
     if (childrens instanceof Array) {
       return childrens.map(item => (
         <li key={item.id}>
-          <Checkbox onChange={(e) => this.onChangeSelect(e, {id:item.id, title:item.title})}>{ item.title }</Checkbox>
+          <Checkbox onChange={(e) => this.onChangeSelect(e, {id:item.id, title:item.title})}  checked={value.indexOf(item.id) > -1}>{ item.title }</Checkbox>
         </li>))
     }
   }

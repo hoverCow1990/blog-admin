@@ -1,7 +1,6 @@
-@import '../../assets/css/global.less';
+@import '../../assets/css/regular.less';
 
 .cowTagText {
-  display: none;
   position: fixed;
   width: 560px;
   height: 280px;
@@ -13,10 +12,14 @@
   border-radius: 4px;
   background-color: #fff;
   z-index: 2000;
-  &.active {
-    display: block;
-  }
+  opacity: 0;
+  transform: scale(0);
+  transition: .2s;
   .border();
+  &.active {
+    opacity: 1;
+    transform: scale(1);
+  }
   .cowTagText-title {
     height: 12%;
     font-size: 14px;

@@ -21,77 +21,8 @@ class Category extends Component {
       alertTitle: '', // 弹窗标题
       alertType: '',  // 0为顶级栏目 1后为二级栏目的id
       addItemVal: '',
-      categoryList: [{
-          title: 'javascript',
-          id: 1,
-          childrens: [{
-              title: 'vue',
-              id: 2
-            }, {
-              title: 'angular',
-              id: 3
-            }, {
-              title: 'react',
-              id: 4
-            }, {
-              title: 'backbone',
-              id: 5
-            }, {
-              title: 'es6',
-              id: 6
-            }, {
-              title: 'jquery',
-              id: 7
-            }, {
-              title: 'backbone',
-              id: 8
-            }]
-      }, {
-          title: 'html',
-          id: 9,
-          childrens: [{
-              title: 'html',
-              id: 10
-            }, {
-              title: 'less',
-              id: 11
-            }, {
-              title: 'sass',
-              id: 12
-            }, {
-              title: 'BootsTrip',
-              id: 23
-            }]
-      }, {
-          title: 'node/java',
-          id: 13,
-          childrens: [{
-              title: 'http',
-              id: 14
-            }, {
-              title: 'node',
-              id: 15
-            }, {
-              title: 'java',
-              id: 16
-            }, {
-              title: 'php',
-              id: 18
-            }]
-      }, {
-          title: 'others',
-          id: 19,
-          childrens: [{
-              title: 'photoshop',
-              id: 20
-            }, {
-              title: 'dede',
-              id: 21
-            }, {
-              title: 'tool',
-              id: 22
-            }]
-      }]
+      categoryList: [],
+      nowCategory: 1
     }
   }
   render () {
@@ -106,7 +37,7 @@ class Category extends Component {
           </div>
         </div>
         <div className="category-bd">
-          <Collapse accordion defaultActiveKey={['1']} onChange={this.changeCategory}>
+          <Collapse accordion defaultActiveKey={['1']} onChange={(key) => this.changeCategory(key)}>
             {PanelList}
           </Collapse>
           <div className="category-perview">
@@ -116,21 +47,34 @@ class Category extends Component {
         <Modal
           visible={alertVisible}
           title={alertTitle}
-          onOk={() => this.handlerSubmit()}
           onCancel={() => this.hidenAlert()}
           footer={[
-            <Button key="back" size="large" onClick={() => this.hidenAlert()}>Return</Button>,
-            <Button key="submit" type="primary" size="large" loading={isSubmitLoding} onClick={() => this.handlerSubmit()}>
-              Submit
-            </Button>,
+            <Button key="back" size="large" onClick={() => this.hidenAlert()}>返回</Button>,
+            <Button key="submit" type="primary" size="large" loading={isSubmitLoding} onClick={() => this.handlerSubmit()} >
+              确定
+            </Button>
           ]}
         >
           <div className="alert-container">
-            <Input className={inputVerify ? "" : "err"} size="large" placeholder="栏目名称" onChange={e => this.handlerAddItemVal(e)}/>
+            <Input className={inputVerify ? "" : "err"} size="large" placeholder="栏目名称" onChange={e => this.handlerAddItemVal(e)} ref="addValInput" />
           </div>
         </Modal>
       </div>
     )
+  }
+  componentWillMount () {
+    this.requestCategoryList()
+  }
+  // 请求菜单列表
+  requestCategoryList () {
+    this.$Http({
+      url: this.$Constant.API.category.getList,
+      method: 'GET'
+    }).then(res => {
+      this.setState({
+        categoryList: res
+      })
+    })
   }
   // 顶级菜单的渲染
   renderPanelList () {
@@ -153,8 +97,7 @@ class Category extends Component {
       <li key={item.id}>
         <p className="tag">{item.title}</p>
         <div className="control">
-          <span><a href={`${homePage}/article/${item.id}`} target="_blanket">预览</a></span>
-          <span>删除</span>
+          <span><a href={`${homePage}/article/${item.id}`} target="_blanket">预览<Icon type="eye-o" /></a></span>
         </div>
       </li>
     ))
@@ -182,7 +125,11 @@ class Category extends Component {
   }
   // 提交表单
   handlerSubmit () {
-    let addItemVal = this.state.addItemVal
+    this.setState({
+      isSubmitLoding: true
+    })
+    let {addItemVal, nowCategory} = this.state
+    nowCategory = Number(nowCategory)
     if (!addItemVal | /^\d+$/.test(addItemVal)) {
       this.setState({
         inputVerify: false
@@ -192,10 +139,42 @@ class Category extends Component {
       this.setState({
         inputVerify: true
       })
+      this.$Http({
+        url: this.$Constant.API.category.addCategory,
+        method: 'POST',
+        data: {
+          title: addItemVal,
+          perId: nowCategory
+        }
+      }).then(res => {
+        let {categoryList} = this.state
+        let perItem = categoryList.find(item => item.id === nowCategory)
+        perItem.childrens.push({
+          title: addItemVal,
+          perId: this.state.nowCategory,
+          id: res.id,
+          artcleNum: 0
+        })
+        if (res.statue) {
+          this.setState({
+            alertVisible: false,
+            addItemVal: '',
+            categoryList,
+            isSubmitLoding: false
+          })
+          this.refs.addValInput.refs.input.value = ''
+          message.success(res.msg)
+        } else {
+          message.error('添加失败')
+        }
+      })
     }
   }
   changeCategory (key) {
-    console.log(key)
+    console.log(this)
+    this.setState({
+      nowCategory: key
+    })
   }
 }
 
