@@ -8,6 +8,7 @@ import {
   Upload,
   Button
 } from 'antd'
+import CowUpload from '@/components/cowUpload/cowUpload'
 import './cowEditor.less'
 
 const { TextArea } = Input
@@ -17,22 +18,9 @@ class CowEditor extends Component {
   constructor () {
     super()
     this.state = {
-      preViewUploadProps: { // preView部分的上传图片
+      uploadProps: {
         name: 'file',
-        action: '//jsonplaceholder.typicode.com/posts/',
-        headers: {  //请求头
-           authorization: 'authorization-text'
-        },
-        onChange(info) {
-          if (info.file.status !== 'uploading') {
-            console.log(info.file, info.fileList);
-          }
-          if (info.file.status === 'done') {
-            message.success(`${info.file.name} file uploaded successfully`);
-          } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-          }
-        }
+        action: this.$Constant.API.artcle.uploadImg
       },
       perviewerVisible: false, // perviewer弹窗是否可见
       perviewerContext: '', // perviewer弹窗内所有内容转为html格式的value信息
@@ -61,7 +49,7 @@ class CowEditor extends Component {
     }
   }
   render () {
-    const { perviewerContext, isTagEditorVisiable, tagEditorType, perviewerVisible, chapterVisible, mainContext, perviewerVal } = this.state
+    const { perviewerContext, isTagEditorVisiable, tagEditorType, perviewerVisible, chapterVisible, mainContext, perviewerVal, uploadProps } = this.state
     return (
       <div className="cow-editor">
         <div className="article-editTool">
@@ -85,16 +73,7 @@ class CowEditor extends Component {
           onCancel={() => this.handlePerviewerCancel()}
         >
           <div className="editor-perviewer-model">
-            <Upload
-              name='file'
-              action='//jsonplaceholder.typicode.com/posts/'
-              headers={{  //请求头
-                 authorization: 'authorization-text'
-              }}>
-              <Button>
-                <Icon type="upload" /> 上传前瞻图
-              </Button>
-            </Upload>
+            <CowUpload {...uploadProps} success={(res) => this.uploadSuccess(res)}/>
             <Input placeholder="地址链接" size="large" ref="demoLink" value={perviewerVal.demoLink} onChange={(e) => this.setPerviewerVal('demoLink', e)} />
             <Input placeholder="下载地址" size="large" ref="downLoadLink" value={perviewerVal.downLoadLink} onChange={(e) => this.setPerviewerVal('downLoadLink', e)} />
             <Input placeholder="github" size="large" ref="githubLink" value={perviewerVal.githubLink} onChange={(e) => this.setPerviewerVal('githubLink', e)} />
@@ -405,7 +384,6 @@ class CowEditor extends Component {
   }
   // 前瞻弹窗确定按钮
   handlePerviewerOk = e => {
-    const templateImg = 'http://www.web-jackiee.com/uploads/allimg/170313/1-1F313043542922.jpg'
     let {img, demoLink, downLoadLink, githubLink, info} = this.state.perviewerVal
     const perviewerContext = this.getPerviewerDom({
       templateImg: img,
@@ -469,6 +447,17 @@ class CowEditor extends Component {
   // 获取章节数
   getParaNum (index) {
     return '' + Math.ceil((index + 1)/ 10) + '.' + index % 10
+  }
+  // 上传图片成功
+  uploadSuccess (res) {
+    if (res.statue) {
+      let perviewerVal = Object.assign({}, this.state.perviewerVal, {
+        img: res.url
+      })
+      this.setState({
+        perviewerVal
+      })
+    }
   }
 }
 

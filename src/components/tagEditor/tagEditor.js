@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import {
   Button,
   Icon,
-  Upload,
   message,
   Select,
   Input
 } from 'antd'
 import './tagEditor.less'
+import CowUpload from '@/components/cowUpload/cowUpload'
 
 const Option = Select.Option
 
@@ -15,7 +15,12 @@ class TagEditor extends Component {
   constructor () {
     super()
     this.state = {
-      codeType: 'javascript'
+      codeType: 'javascript',
+      uploadProps: {
+        name: 'file',
+        action: this.$Constant.API.artcle.uploadImg
+      },
+      uploadPerviewer: ''
     }
   }
   render () {
@@ -38,30 +43,16 @@ class TagEditor extends Component {
       case 'title':
         return (<Input className="ant-input cowTag-titleInput" placeholder="标题" ref="title"/>)
       case 'p':
-        return (<textarea type="textarea" placeholder="文章概要" className="ant-input cowTag-textArea" ref="textarea"/>)
+        return (
+          <textarea type="textarea" placeholder="文章概要" className="ant-input cowTag-textArea" ref="textarea"/>
+        )
       case 'img':
         return (
           <div className='upload'>
-            <Upload
-              name='file'
-              action='//jsonplaceholder.typicode.com/posts/'
-              headers={{
-                authorization: 'authorization-text',
-              }}
-              onChange= {info => {
-                if (info.file.status !== 'uploading') {
-                  console.log(info.file, info.fileList);
-                }
-                if (info.file.status === 'done') {
-                  message.success(`${info.file.name} file uploaded successfully`);
-                } else if (info.file.status === 'error') {
-                  message.error(`${info.file.name} file upload failed.`);
-                }
-              }}>
-              <Button>
-                <Icon type="upload" /> Click to Upload
-              </Button>
-            </Upload>
+            <div className='upload-perviewer'>
+              <img src={this.state.uploadPerviewer} alt=""/>
+            </div>
+            <CowUpload {...this.state.uploadProps} success={(res) => this.uploadSuccess(res)}/>
           </div>)
       case 'code':
         return (
@@ -95,10 +86,14 @@ class TagEditor extends Component {
       case 'code':
         this.handlerCodeval()
         break
+      case 'img':
+        this.handlerImgval()
+        break
       default:
         return ''
     }
   }
+  // 处理标题的确定
   handlerTitle () {
     const value = this.refs.title.refs.input.value
     this.props.submitTagEditor({
@@ -106,6 +101,7 @@ class TagEditor extends Component {
       value
     })
   }
+  // 处理P标签的确定
   handlerPval () {
     const val = this.refs.textarea.value
     let value = val ? '<p>' + this.refs.textarea.value + '</p>' : ''
@@ -115,6 +111,7 @@ class TagEditor extends Component {
     })
     this.refs.textarea.value = ''
   }
+  // 处理code标签的确定
   handlerCodeval () {
     const val = this.refs.textarea.value
     let value = this.getCode(val)
@@ -123,6 +120,18 @@ class TagEditor extends Component {
       value
     })
     this.refs.textarea.value = ''
+  }
+  // 处理img标签的确定
+  handlerImgval () {
+    let uploadPerviewer = this.state.uploadPerviewer
+    let value = uploadPerviewer ? '<img src="' + uploadPerviewer + '" alt="" />' : ''
+    this.props.submitTagEditor({
+      type: 'img',
+      value
+    })
+    this.setState({
+      uploadPerviewer: ''
+    })
   }
   // js分行
   getCode (val) {
@@ -199,6 +208,14 @@ class TagEditor extends Component {
     .replace(/^\s+/, $0 => {
       return '&nbsp;'.repeat($0.length)
     })
+  }
+  // 上传图片成功
+  uploadSuccess (res) {
+    if (res.statue) {
+      this.setState({
+        uploadPerviewer: res.url
+      })
+    }
   }
 }
 
