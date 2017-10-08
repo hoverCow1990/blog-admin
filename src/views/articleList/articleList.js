@@ -19,72 +19,13 @@ class ArticleList extends Component {
     this.state = {
       alertVisible: false, // 弹窗显示隐藏
       isSubmitLoding: false, // 是否提交表单
-      allArticleLength: 100,
+      allArticleLength: 0,
       defaultPageSize: 10,
-      articleList: [{
-        title: '联和利华天猫首页3稿',
-        time: '2016-11-15 02:32:00',
-        id: '123',
-        watch: 12,
-        message: 2
-      }, {
-        title: '纯hover流推广页面',
-        time: '2016-11-15 02:32:00',
-        id: '5',
-        watch: 12,
-        message: 12
-      }, {
-        title: '明星翻转盒子',
-        time: '2016-11-15 02:32:00',
-        id: '221',
-        watch: 12,
-        message: 5
-      }, {
-        title: '3D 翻转式轮播体',
-        time: '2016-11-15 02:32:00',
-        id: '12',
-        watch: 12,
-        message: 0
-      }, {
-        title: '3D 螺旋体翻转',
-        time: '2016-11-15 03:32:00',
-        id: '3',
-        watch: 12,
-        message: 0
-      }, {
-        title: '联和利华天猫首页3稿',
-        time: '2016-11-15 02:32:00',
-        id: '1',
-        watch: 12,
-        message: 2
-      }, {
-        title: '纯hover流推广页面',
-        time: '2016-11-15 02:32:00',
-        id: '15',
-        watch: 12,
-        message: 12
-      }, {
-        title: '明星翻转盒子',
-        time: '2016-11-15 02:32:00',
-        id: '21',
-        watch: 12,
-        message: 5
-      }, {
-        title: '3D 翻转式轮播体',
-        time: '2016-11-15 02:32:00',
-        id: '33',
-        watch: 12,
-        message: 0
-      }, {
-        title: '3D 螺旋体翻转',
-        time: '2016-11-15 03:32:00',
-        id: '113',
-        watch: 12,
-        message: 0
-      }]
+      articleList: []
     }
   }
   componentWillMount () {
+    this.requestArticleList(0, '0') // 第一个为第几页开始 第二个为type
     this.setDefaultPageSize()
   }
   render () {
@@ -107,10 +48,10 @@ class ArticleList extends Component {
                 style={{ width: 200 }}
                 onSearch={val => handerSearch(val)}
               />
-              <Select defaultValue="0" style={{ width: 120 }} onChange={handleTypeChange}>
-                <Option value="0">All</Option>
+              <Select defaultValue="0" style={{ width: 120 }} onChange={type => this.handleTypeChange(type)}>
+                <Option value="0">all</Option>
                 <Option value="1">javascript</Option>
-                <Option value="2">html</Option>
+                <Option value="2">html/css</Option>
                 <Option value="3">node/java</Option>
                 <Option value="4">others</Option>
               </Select>
@@ -136,6 +77,33 @@ class ArticleList extends Component {
       </div>
     )
   }
+  // 请求文章列表
+  requestArticleList (st, type) {
+    let end = st + this.state.defaultPageSize
+    this.$Http({
+      url: this.$Constant.API.artcle.getArtcleList,
+      method: 'get',
+      params: {
+        st,
+        end,
+        type
+      }
+    }).then(res => {
+      let articleList = res.articleList.map(item => {
+        return {
+          id: item.id,
+          title: item.title,
+          message: this.$Lib.transMsgLength(item.message),
+          watch: item.watch,
+          time: this.$Lib.transTime(item.time)
+        }
+      })
+      this.setState({
+        articleList,
+        allArticleLength: res.allLength
+      })
+    })
+  }
   // 根据页面高度设置显示的每页的条数
   setDefaultPageSize () {
     const docHeight = window.document.documentElement.offsetHeight
@@ -158,7 +126,7 @@ class ArticleList extends Component {
           <div className="control-btn" onClick={() => this.linkToArticle(item.id)}>
             <img src={require("./images/3.png")} alt="" />
           </div>
-          <div className="control-btn" onClick={() => this.linkToView(item.title)}>
+          <div className="control-btn" onClick={() => this.linkToView(item.id)}>
             <img src={require("./images/5.png")}  alt="" />
           </div>
           <div className="control-btn" onClick={() => this.deleteArticle(item.title)}>
@@ -204,7 +172,7 @@ class ArticleList extends Component {
   }
   // 切换选择类型
   handleTypeChange (type) {
-    console.log(type)
+    this.requestArticleList(0, type)
   }
   // 搜索对应type的文章
   handerSearch (val) {
@@ -213,6 +181,9 @@ class ArticleList extends Component {
   // 切换页面
   handlerPageChange (index) {
     console.log(index, this)
+  }
+  linkToView () {
+    window.location.href = ''
   }
 }
 

@@ -196,7 +196,8 @@ class Article extends Component {
     const {articleInner} = this.state
     let cowEditorState = this.refs.cowEditor.state
     let perviewer = cowEditorState.perviewerContext && id === '0' ? '<div class="article-perviewer">' + cowEditorState.perviewerContext + '</div>' : cowEditorState.perviewerContext
-    let mainContext = id === '0' ? '<div id="context" class="article-context hasDash">' + cowEditorState.mainContext + '</div>' : cowEditorState.mainContext
+    // let mainContext = id === '0' ? '<div id="context" class="article-context hasDash">' + cowEditorState.mainContext + '</div>' : cowEditorState.mainContext
+    let mainContext = cowEditorState.mainContext
     let context = perviewer + mainContext
     let isCanSubmit = this.validateVal(articleInner)
     let articleInnerData = Object.assign({}, articleInner, {

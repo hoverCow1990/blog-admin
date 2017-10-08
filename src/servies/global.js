@@ -18,7 +18,9 @@ import '@/assets/css/global.less'
 import $Constant from '@/config/constant'
 import $Http from './http.js'
 import $Cookies from './cookies.js'
+import $Lib from './lib.js'
 
 React.Component.prototype.$Constant = $Constant
 React.Component.prototype.$Http = $Http
 React.Component.prototype.$Cookies = $Cookies
+React.Component.prototype.$Lib = $Lib

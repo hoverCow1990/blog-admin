@@ -159,7 +159,7 @@ class TagEditor extends Component {
   getJsCode (code) {
     console.log(code)
     return code
-    .replace(/("([^\\"\n]|\\.)*?"|'([^\\'\n]|\\.)*?'|`([^\\`\n]|\\.)*?`|\/.+\/)/g, $0 => {
+    .replace(/("([^\\"\n]|\\.)*?"|'([^\\'\n]|\\.)*?'|`([^\\`\n]|\\.)*?`|\/[\s]+\/)/g, $0 => {
       let word = $0.match(/('|"|\/|`).+/)[0]
       let beforeSymbol = $0.match(/^(\s|\[|\(|,|:|\?|\+)+/)
       let before = beforeSymbol ? beforeSymbol[0] : ''

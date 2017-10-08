@@ -44,7 +44,7 @@ class CowEditor extends Component {
       activeParagraph: 0,  // 当前活动的段落信息
       isTagEditorVisiable: false, // 是否tag标签编辑器可见
       tagEditorType: '', // tag标签的类型 比如p 或是 image
-      initContextSwitch: false,
+      initContextSwitch: false, // 首次加载id!=0后初始化文章的开关
       initInfoSwitch: true
     }
   }
@@ -158,6 +158,7 @@ class CowEditor extends Component {
       </div>
     )
   }
+  // 首次加载不为0的文章
   componentWillReceiveProps (nextProps) {
     if (this.state.initContextSwitch) return
     if (nextProps.initContext) {
@@ -169,7 +170,7 @@ class CowEditor extends Component {
       this.setState({
         mainContext,
         perviewerContext,
-        initContextSwitch: true,
+        initContextSwitch: true, // 首次加载后初始化文章的开关
         initInfoSwitch: false
       })
     }
@@ -207,6 +208,7 @@ class CowEditor extends Component {
       })
     }
   }
+  // 初始文章
   initialArtcle () {
     let mainDom = document.getElementsByClassName('context-box')
     let chapterList = []
@@ -229,7 +231,8 @@ class CowEditor extends Component {
       })
     })
     this.setState({
-      chapterList
+      chapterList,
+      initInfoSwitch: true
     })
   }
   // 设置段落标题
