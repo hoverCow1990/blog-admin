@@ -5,7 +5,8 @@ import {
   Modal,
   Input,
   Select,
-  Pagination
+  Pagination,
+  message
 } from 'antd'
 import './articleList.less'
 
@@ -19,18 +20,20 @@ class ArticleList extends Component {
     this.state = {
       alertVisible: false, // 弹窗显示隐藏
       isSubmitLoding: false, // 是否提交表单
-      allArticleLength: 0,
-      defaultPageSize: 10,
-      articleList: []
+      allArticleLength: 0,  // 所有文章的个数
+      defaultPageSize: 10, // 每页展示的条数
+      nowArticleType: '0',  // 目前显示的文章类型
+      nowPageIndex: 0,  // 目前显示文章分页的页数
+      articleList: [],
+      searchVal: ''
     }
   }
   componentWillMount () {
     this.requestArticleList(0, '0') // 第一个为第几页开始 第二个为type
-    this.setDefaultPageSize()
+    // this.setDefaultPageSize()
   }
   render () {
-    const { handleTypeChange, handerSearch} = this
-    let { allArticleLength, defaultPageSize } = this.state
+    let { allArticleLength, defaultPageSize, searchVal, nowPageIndex } = this.state
     let articleList = this.renderArticleList()
     return (
       <div className="artcleList admin-container">
@@ -46,7 +49,9 @@ class ArticleList extends Component {
               <Search
                 placeholder="搜索"
                 style={{ width: 200 }}
-                onSearch={val => handerSearch(val)}
+                value={searchVal}
+                onChange={e => this.handlerSearchVal(e)}
+                onSearch={val => this.handerSearch()}
               />
               <Select defaultValue="0" style={{ width: 120 }} onChange={type => this.handleTypeChange(type)}>
                 <Option value="0">all</Option>
@@ -71,46 +76,11 @@ class ArticleList extends Component {
             </ul>
           </div>
           <div className="artcleList-pagination">
-            <Pagination defaultCurrent={1} total={allArticleLength} defaultPageSize={defaultPageSize} onChange={index => this.handlerPageChange(index)}/>
+            <Pagination defaultCurrent={1} total={allArticleLength} current={nowPageIndex + 1} defaultPageSize={defaultPageSize} onChange={index => this.handlerPageChange(index - 1)}/>
           </div>
         </div>
       </div>
     )
-  }
-  // 请求文章列表
-  requestArticleList (st, type) {
-    let end = st + this.state.defaultPageSize
-    this.$Http({
-      url: this.$Constant.API.artcle.getArtcleList,
-      method: 'get',
-      params: {
-        st,
-        end,
-        type
-      }
-    }).then(res => {
-      let articleList = res.articleList.map(item => {
-        return {
-          id: item.id,
-          title: item.title,
-          message: this.$Lib.transMsgLength(item.message),
-          watch: item.watch,
-          time: this.$Lib.transTime(item.time)
-        }
-      })
-      this.setState({
-        articleList,
-        allArticleLength: res.allLength
-      })
-    })
-  }
-  // 根据页面高度设置显示的每页的条数
-  setDefaultPageSize () {
-    const docHeight = window.document.documentElement.offsetHeight
-    const leftHeight = docHeight - 270
-    this.setState({
-      defaultPageSize: Math.ceil(leftHeight / 39) - 1
-    })
   }
   // 渲染文章列表
   renderArticleList () {
@@ -129,25 +99,86 @@ class ArticleList extends Component {
           <div className="control-btn" onClick={() => this.linkToView(item.id)}>
             <img src={require("./images/5.png")}  alt="" />
           </div>
-          <div className="control-btn" onClick={() => this.deleteArticle(item.title)}>
+          <div className="control-btn" onClick={() => this.deleteArticle(item.title, item.id)}>
             <img src={require("./images/1.png")}  alt="" />
           </div>
         </div>
       </li>
     ))
   }
+  // 请求文章列表
+  requestArticleList (st, type) {
+    let end = this.state.defaultPageSize
+    this.$Http({
+      url: this.$Constant.API.artcle.getArticleList,
+      method: 'GET',
+      params: {
+        st,
+        end,
+        type
+      }
+    }).then(res => {
+      this.setArticleList(res)
+    })
+  }
+  // 设置文章列表
+  setArticleList (res) {
+    let articleList = res.articleList.map(item => {
+      return {
+        id: item.id,
+        title: item.title,
+        message: this.$Lib.transMsgLength(item.message),
+        watch: item.watch,
+        time: this.$Lib.transTime(item.time)
+      }
+    })
+    this.setState({
+      articleList,
+      allArticleLength: res.allLength
+    })
+  }
+  // 根据页面高度设置显示的每页的条数
+  setDefaultPageSize () {
+    const docHeight = window.document.documentElement.offsetHeight
+    const leftHeight = docHeight - 270
+    this.setState({
+      defaultPageSize: Math.ceil(leftHeight / 39) - 1
+    })
+  }
   // 删除文章
-  deleteArticle (title) {
+  deleteArticle (title, id) {
+    let _self = this
+    let st = this.state.nowPageIndex * this.state.defaultPageSize
+    let end = this.state.defaultPageSize
+    let nowArticleType = this.state.nowArticleType
     confirm({
       title: '确定要删除该文章吗?',
       content: `${title}删除后操作不可恢复`,
       iconType: 'info-circle',
       onOk() {
-        // return new Promise((resolve, reject) => {
-        //   setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-        // }).catch(() => console.log('Oops errors!'));
+        _self.$Http({
+          url: _self.$Constant.API.artcle.deleteArticle,
+          method: 'POST',
+          data: {
+            id,
+            st,
+            end,
+            type: nowArticleType
+          }
+        }).then(res => {
+          if (res.statue) {
+            _self.setArticleList(res)
+            message.success('文章删除成功')
+          }
+        })
       },
       onCancel() {},
+    })
+  }
+  handlerSearchVal (e) {
+    let value = e.target.value
+    this.setState({
+      searchVal: value
     })
   }
   // 链接至文章页面
@@ -172,15 +203,40 @@ class ArticleList extends Component {
   }
   // 切换选择类型
   handleTypeChange (type) {
+    if (this.state.nowArticleType === type) return
+    this.setState({
+      nowArticleType: type,
+      nowPageIndex: 0,
+      searchVal: ''
+    })
     this.requestArticleList(0, type)
   }
   // 搜索对应type的文章
-  handerSearch (val) {
-    console.log(val)
+  handerSearch (st = 0) {
+    let {nowArticleType, defaultPageSize, searchVal} = this.state
+    this.$Http({
+      url: this.$Constant.API.artcle.searchArtcleList,
+      params: {
+        st,
+        end: defaultPageSize,
+        keyWords: searchVal,
+        type: this.state.nowArticleType
+      }
+    }).then(res => {
+      this.setArticleList(res)
+    })
   }
   // 切换页面
   handlerPageChange (index) {
-    console.log(index, this)
+    let { searchVal, nowArticleType } = this.state
+    this.setState({
+      nowPageIndex: index
+    })
+    if (searchVal) {
+      this.handerSearch(index)
+    } else {
+      this.requestArticleList(index * this.state.defaultPageSize, nowArticleType)
+    }
   }
   linkToView () {
     window.location.href = ''

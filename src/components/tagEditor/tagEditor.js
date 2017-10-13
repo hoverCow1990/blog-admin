@@ -52,7 +52,10 @@ class TagEditor extends Component {
             <div className='upload-perviewer'>
               <img src={this.state.uploadPerviewer} alt=""/>
             </div>
-            <CowUpload {...this.state.uploadProps} success={(res) => this.uploadSuccess(res)}/>
+            <div className='upload-input'>
+              <CowUpload {...this.state.uploadProps} success={(res) => this.uploadSuccess(res)}/>
+              <Input className="ant-input cowTag-aImg" placeholder="图片链接" ref="imgLink"/>
+            </div>
           </div>)
       case 'code':
         return (
@@ -66,6 +69,13 @@ class TagEditor extends Component {
             <textarea type="textarea" placeholder="文章概要" className="ant-input cowTag-textArea" ref="textarea"/>
           </div>
         )
+      case 'a':
+        return (
+          <div className='aHref'>
+            <Input className="ant-input cowTag-aInput" placeholder="标题" ref="title"/>
+            <Input className="ant-input cowTag-aInput" placeholder="内容" ref="tag"/>
+            <Input className="ant-input cowTag-aInput" placeholder="链接" ref="href"/>
+          </div>)
       default:
         return ''
     }
@@ -85,6 +95,9 @@ class TagEditor extends Component {
         break
       case 'code':
         this.handlerCodeval()
+        break
+      case 'a':
+        this.handlerAval()
         break
       case 'img':
         this.handlerImgval()
@@ -121,14 +134,36 @@ class TagEditor extends Component {
     })
     this.refs.textarea.value = ''
   }
+  // 处理a标签的确定
+  handlerAval () {
+    const title = this.refs.title.refs.input.value
+    const tag = this.refs.tag.refs.input.value
+    const href = this.refs.href.refs.input.value
+    if (!tag || !href) {
+      message.error('内容或链接不能为空')
+      return
+    }
+    let value = '<p><span>' + (title ? title + ' : ' : '') + '</span><a href="' + href + '" target="_blanket">' + tag + '</a></p>'
+    this.props.submitTagEditor({
+      type: 'a',
+      value
+    })
+  }
   // 处理img标签的确定
   handlerImgval () {
     let uploadPerviewer = this.state.uploadPerviewer
-    let value = uploadPerviewer ? '<img src="' + uploadPerviewer + '" alt="" />' : ''
+    let imgLink = this.refs.imgLink.refs.input.value
+    let value = ''
+    if (imgLink) {
+      value = uploadPerviewer ? '<a href="' + imgLink + '" target="_blanket"><img src="' + uploadPerviewer + '" alt="" /></a>' : ''
+    } else {
+      value = uploadPerviewer ? '<img src="' + uploadPerviewer + '" alt="" />' : ''
+    }
     this.props.submitTagEditor({
       type: 'img',
       value
     })
+    this.refs.imgLink.refs.input.value = ''
     this.setState({
       uploadPerviewer: ''
     })
@@ -157,7 +192,6 @@ class TagEditor extends Component {
   }
   // 处理js细节代码
   getJsCode (code) {
-    console.log(code)
     return code
     .replace(/("([^\\"\n]|\\.)*?"|'([^\\'\n]|\\.)*?'|`([^\\`\n]|\\.)*?`|\/[\s]+\/)/g, $0 => {
       let word = $0.match(/('|"|\/|`).+/)[0]
@@ -173,7 +207,7 @@ class TagEditor extends Component {
       if (/code/.test($1) || /"$/.test($1)) return $0
       return $1 + '<code class="red">></code>'
     })
-    .replace(/((const|var|function|let|class|extends)\s|(Math|Array|Symbol|Object)\.|\.(apply|slice|split|call|bind|apply|push|pop|unshift|concat|forEach|map|reduce|some|join|add|random|prototype|__proto__|getElementById|getClassName|queryselectorAll|hasOwnProperty|match|assign|ajax|repeat|padStart|padEnd|indexOf)|document|window|solve|reject|resolve)/g, $0 => {
+    .replace(/((const|var|let|class|extends)\s|function(\s|\()|(Math|Array|Symbol|Object)\.|\.(apply|slice|split|call|bind|apply|push|pop|unshift|concat|forEach|map|reduce|some|join|add|random|prototype|__proto__|getElementById|getClassName|queryselectorAll|hasOwnProperty|match|assign|ajax|repeat|padStart|padEnd|indexOf)|document|window|solve|reject|resolve)/g, $0 => {
       var word = $0.match(/\w+/)[0]
       var beforeSymbol = $0.match(/^\W/)
       var afterSymbol = $0.match(/\W$/)
@@ -181,7 +215,7 @@ class TagEditor extends Component {
       var after = afterSymbol ? afterSymbol[0] : ''
       return before + '<code class="blue">' + word + '</code>' + after
     })
-    .replace(/((if|for|super)(\s|\()|else(\s|\{)|(return|break)(\s|;)|(export|new|continue|default|delete|throw|while|typeof|switch|try|instanceof|with|catch|import)\s|this(\.|\s)\s)/g, $0 => {
+    .replace(/((if|for|super)(\s|\()|else(\s|\{)|(return|break)(\s|;)|(export|new|continue|default|delete|throw|while|typeof|switch|try|instanceof|with|catch|import)\s|this(\.|\s))/g, $0 => {
       var word = $0.match(/\w+/)[0]
       var symbol = $0.match(/\W/)[0] || ''
       return '<code class="red">' + word + '</code>' + symbol
@@ -220,3 +254,19 @@ class TagEditor extends Component {
 }
 
 export default TagEditor;
+// //编译less并导出压缩后的css
+// gulp.task('handlerCss', function () {
+//   gulp.src(DEV_LCSS)
+//     .pipe(less())
+//     .pipe(cssmin())     //.pipe(cssmin({compatibility: 'ie7'}))兼容ie7
+//     .pipe(autoprefixer({
+//       browsers: ['last 2 versions', 'Android >= 4.0'],
+//       cascade: false, //是否美化属性值 默认：true 像这样：
+//       remove:true     //是否去掉不必要的前缀 默认：true
+//     }))
+//     .pipe(gulp.dest(ISS_LCSS))
+//     .on("end",function(){
+//       MIX_CSSBOOL && concatCss();
+//       gulp.src(DEV_LCSS).pipe(browserSync.reload({stream: true}))
+//     });
+// })

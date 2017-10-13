@@ -58,7 +58,7 @@ class Article extends Component {
               <li>
                 <span className="tag">关键词</span>
                 <div className="list-context">
-                  <Input placeholder="关键词用于被搜索两两之间用;分割"  value={this.state.articleInner.keyWords} ref="keyWords" onChange={(e) => this.handlerInputVal(e, 'keyWords')}/>
+                  <Input placeholder="关键词之间用,分割"  value={this.state.articleInner.keyWords} ref="keyWords" onChange={(e) => this.handlerInputVal(e, 'keyWords')}/>
                 </div>
               </li>
               <li>
@@ -135,7 +135,7 @@ class Article extends Component {
   // 请求已有的文章信息
   requestArticleInfo (id) {
     this.$Http({
-      url: this.$Constant.API.artcle.getArtcle,
+      url: this.$Constant.API.artcle.getArticle,
       method: 'GET',
       params: {
         id
@@ -146,8 +146,9 @@ class Article extends Component {
   }
   // 查询旧文章后的初始化
   initialArtcle (res) {
-    let {title, weight, mainType, keyWords, description, smallPerviewer, secondType, context} = res
-    secondType = secondType.split(',').map(item => Number(item))
+    let {title, weight, mainType, keyWords, description, smallPerviewer, secondType, context, perviewerContext} = res
+    keyWords = keyWords.substring(1, keyWords.length - 1 )
+    secondType = secondType.substring(1, secondType.length - 1).split(',').map(item => Number(item))
     mainType = this.state.categoryList.find(item => item.id === mainType).title
     this.setState({
       articleInner: {
@@ -159,7 +160,10 @@ class Article extends Component {
         smallPerviewer,
         secondType
       },
-      initContext: context
+      initContext: {
+        context,
+        perviewerContext
+      }
     })
   }
   // 处理input键入后改变值
@@ -195,12 +199,13 @@ class Article extends Component {
     const id = search.match(/=(\d+)$/)[1]
     const {articleInner} = this.state
     let cowEditorState = this.refs.cowEditor.state
-    let perviewer = cowEditorState.perviewerContext && id === '0' ? '<div class="article-perviewer">' + cowEditorState.perviewerContext + '</div>' : cowEditorState.perviewerContext
-    // let mainContext = id === '0' ? '<div id="context" class="article-context hasDash">' + cowEditorState.mainContext + '</div>' : cowEditorState.mainContext
-    let mainContext = cowEditorState.mainContext
-    let context = perviewer + mainContext
+    // let perviewer = cowEditorState.perviewerContext && id === '0' ? '<div class="article-perviewer">' + cowEditorState.perviewerContext + '</div>' : cowEditorState.perviewerContext
+    let perviewerContext = cowEditorState.perviewerContext || ''
+    let mainContext = cowEditorState.mainContext || ''
+    // let context = perviewer + mainContext
     let isCanSubmit = this.validateVal(articleInner)
     let articleInnerData = Object.assign({}, articleInner, {
+      keyWords: ',' + articleInner.keyWords + ',',
       mainType: Number.isNaN(Number(articleInner.mainType)) ? this.state.categoryList.find(item => item.title === articleInner.mainType).id : articleInner.mainType
     })
     if (isCanSubmit.statue) {
@@ -210,10 +215,18 @@ class Article extends Component {
         data: {
           id,
           articleInner: articleInnerData,
-          context: context.replace(/("|')/g, ($0, $1) => "\\" + $1)
+          perviewerContext: perviewerContext.replace(/("|')/g, ($0, $1) => "\\" + $1),
+          context: mainContext.replace(/("|')/g, ($0, $1) => "\\" + $1)
         }
       }).then(res => {
-         message.success('文章提交成功')
+         if (res.statue) {
+           this.props.history.push('/main/articleSuccess?id=' + res.id)
+           message.success('文章提交成功')
+         } else {
+           message.error('文章提交失败')
+         }
+      }).catch(err => {
+          message.error('文章提交失败')
       })
     } else {
       message.error(isCanSubmit.msg)

@@ -3,15 +3,10 @@ import TagEditor from '@/components/tagEditor/tagEditor'
 import {
   Icon,
   Modal,
-  Input,
-  message,
-  Upload,
-  Button
+  Input
 } from 'antd'
 import CowUpload from '@/components/cowUpload/cowUpload'
 import './cowEditor.less'
-
-const { TextArea } = Input
 
 // 老牛编辑器组件
 class CowEditor extends Component {
@@ -62,7 +57,7 @@ class CowEditor extends Component {
         </div>
         <div className="article-main">
           <div className="article-box">
-            <div id="article-perviewer" dangerouslySetInnerHTML={{ __html: perviewerContext }} onClick={() => this.showPerviewerModal()}></div>
+            <div className="article-perviewer" dangerouslySetInnerHTML={{ __html: perviewerContext }} onClick={() => this.showPerviewerModal()}></div>
             <div id="context" className={perviewerContext ? "article-context hasDash" : "article-context"} dangerouslySetInnerHTML={{ __html: mainContext }}></div>
           </div>
         </div>
@@ -125,7 +120,7 @@ class CowEditor extends Component {
             <div className="tool-icon" onClick={() => this.showTagEditor('code', index)}>
               <img src={require('./images/code.png')} alt="" />
             </div>
-            <div className="tool-icon">
+            <div className="tool-icon" onClick={() => this.showTagEditor('a', index)}>
               <img src={require('./images/link.png')} alt="" />
             </div>
             <div className="tool-icon" onClick={() => this.exchangeParagraph(index, 'up')}>
@@ -163,10 +158,11 @@ class CowEditor extends Component {
     if (this.state.initContextSwitch) return
     if (nextProps.initContext) {
       let {initContext} = nextProps
-      let perviewerContext = initContext.match(/([\s\S])*?<div class="context-box"/g)
-      let mainContext = initContext.match(/<div class="context-box">[\s\S]*/g)
-      perviewerContext = perviewerContext ? perviewerContext[0].replace(/<div class="context-box"$/, '') : ''
-      mainContext = mainContext ? mainContext[0] : ''
+      // let perviewerContext = initContext.match(/([\s\S])*?<div class="context-box"/g)
+      // let mainContext = initContext.match(/<div class="context-box">[\s\S]*/g)
+      let {perviewerContext, context: mainContext} = initContext
+      // perviewerContext = perviewerContext ? perviewerContext[0].replace(/<div class="context-box"$/, '') : ''
+      // mainContext = mainContext ? mainContext[0] : ''
       this.setState({
         mainContext,
         perviewerContext,
@@ -183,7 +179,7 @@ class CowEditor extends Component {
   }
   // 初始化前瞻部分Input值
   initialPerviewer () {
-    let perviewerDom = document.getElementById('article-perviewer')
+    let perviewerDom = document.getElementsByClassName('article-perviewer')[0]
     if (perviewerDom.innerHTML) {
       let pImg = perviewerDom.getElementsByTagName('img')[0]
       let pDemo = perviewerDom.getElementsByClassName('watch')[0]
@@ -193,7 +189,7 @@ class CowEditor extends Component {
       let img = pImg.src
       let demoLink = pDemo.getElementsByTagName('a')[0].href
       let downLoadLink = pDownload.getElementsByTagName('a')[0].href
-      let githubLink = pGithub.getElementsByTagName('a')[0].href
+      let githubLink = pGithub ? pGithub.getElementsByTagName('a')[0].href : ''
       let info = pDes.innerText
       let perviewerVal = {
         img,
@@ -230,6 +226,15 @@ class CowEditor extends Component {
         paragraphs
       })
     })
+    if (chapterList.length === 0) {
+      chapterList = [{
+        title: '',
+        paragraphs: [{
+          title: '',
+          context: ''
+        }]
+      }]
+    }
     this.setState({
       chapterList,
       initInfoSwitch: true
@@ -376,6 +381,7 @@ class CowEditor extends Component {
       perviewerVisible: false
     })
   }
+  // 改变前瞻窗口的input值改变后的值设定
   setPerviewerVal (key, e) {
     let value = e.target.value
     let perviewerVal = Object.assign({}, this.state.perviewerVal, {
@@ -394,7 +400,11 @@ class CowEditor extends Component {
       templateDownload: downLoadLink,
       templateGithub: githubLink,
       templateInfo: info
-    })
+    }).replace(`<div class="btn github">
+            <a href="" target="_blank">
+              <i class="iconfont icon-github"></i>Github
+            </a>
+          </div>`, '')
     this.setState({
       perviewerVisible: false,
       perviewerContext

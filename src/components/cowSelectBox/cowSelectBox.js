@@ -17,6 +17,7 @@ class CowSelectBox extends Component {
       inItSwitch: false // value只初始化一次
     }
   }
+  // 注册点击外层失去焦点后关闭弹窗
   componentDidMount () {
     this.setState({
       handlerClickBlur: this.buildHandlerClickBlur()
@@ -25,9 +26,11 @@ class CowSelectBox extends Component {
       window.addEventListener('click', this.state.handlerClickBlur)
     })
   }
+  // 注销关闭弹窗事件
   componentWillUnmount () {
     window.removeEventListener('click', this.state.handlerClickBlur)
   }
+  // 用以触发初始化选择内容
   componentWillReceiveProps (nextProps) {
     if (this.state.inItSwitch) return
     if (nextProps.value.length && nextProps.categoryList.length) {
@@ -38,6 +41,7 @@ class CowSelectBox extends Component {
       })
     }
   }
+  // 初始化标题
   getInitSecondTitle (categoryList, value) {
     let arr = []
     for (let i = 0; i < categoryList.length; i++ ) {
@@ -53,6 +57,7 @@ class CowSelectBox extends Component {
     }
     return arr
   }
+  // 失去焦点点击盒子类名的判断
   buildHandlerClickBlur () {
     return e => {
       e = e || e.event

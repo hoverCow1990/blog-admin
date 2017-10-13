@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Menu, Icon } from 'antd';
+import React, { Component } from 'react'
+import { Menu, Icon } from 'antd'
 import './sideNav.less'
 
 const SubMenu = Menu.SubMenu;
@@ -63,6 +63,7 @@ class SideNav extends Component {
  // 获取初始打开的tab
  initialState () {
    let type = this.props.match.params.type
+   if (type === 'articleSuccess') type = 'article'
    let defaultOpenKeys = this.getdefaultOpenKeys(type)
    this.setState({
      current: type,
@@ -93,4 +94,4 @@ class SideNav extends Component {
  }
 }
 
-export default SideNav;
+export default SideNav

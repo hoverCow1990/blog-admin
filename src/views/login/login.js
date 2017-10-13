@@ -50,6 +50,9 @@ class NormalLoginForm extends React.Component {
         })
         this.props.linkToCateGory()
       } else {
+        this.setState({
+          isRequsetLogin: false
+        })
         message.error(res.msg)
       }
     })

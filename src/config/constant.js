@@ -13,7 +13,6 @@ const $Constant = {
   },
   TEMPLATE: {
     perviewer: `
-      <div class="article-perviewer">
         <div class="perviewer">
           <img src="{{ templateImg }}" />
         </div>
@@ -36,8 +35,7 @@ const $Constant = {
               <i class="iconfont icon-github"></i>Github
             </a>
           </div>
-        </div>
-      </div>`
+        </div>`
   },
   API: {
     user: {
@@ -48,10 +46,12 @@ const $Constant = {
       addCategory: HostUrl + 'backCategory/addCategory'
     },
     artcle: {
-      getArtcleList: HostUrl + 'backArtcle/getArtcleList',
-      uploadImg: HostUrl + 'backArtcle/uploadImg',
-      upLoadArticle: HostUrl + 'backArtcle/upLoadArticle',
-      getArtcle: HostUrl + 'backArtcle/getArtcle'
+      getArticleList: HostUrl + 'backArticle/getArticleList',
+      searchArtcleList: HostUrl + 'backArticle/searchArtcleList',
+      uploadImg: HostUrl + 'backArticle/uploadImg',
+      upLoadArticle: HostUrl + 'backArticle/upLoadArticle',
+      getArticle: HostUrl + 'backArticle/getArticle',
+      deleteArticle: HostUrl + 'backArticle/deleteArticle'
     }
   }
 }
