@@ -253,20 +253,4 @@ class TagEditor extends Component {
   }
 }
 
-export default TagEditor;
-// //编译less并导出压缩后的css
-// gulp.task('handlerCss', function () {
-//   gulp.src(DEV_LCSS)
-//     .pipe(less())
-//     .pipe(cssmin())     //.pipe(cssmin({compatibility: 'ie7'}))兼容ie7
-//     .pipe(autoprefixer({
-//       browsers: ['last 2 versions', 'Android >= 4.0'],
-//       cascade: false, //是否美化属性值 默认：true 像这样：
-//       remove:true     //是否去掉不必要的前缀 默认：true
-//     }))
-//     .pipe(gulp.dest(ISS_LCSS))
-//     .on("end",function(){
-//       MIX_CSSBOOL && concatCss();
-//       gulp.src(DEV_LCSS).pipe(browserSync.reload({stream: true}))
-//     });
-// })
+export default TagEditor
