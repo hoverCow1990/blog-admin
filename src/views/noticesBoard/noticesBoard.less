@@ -1,0 +1,75 @@
+@import '../../assets/css/global.less';
+
+.admin-messageBoard {
+  .ant-table {
+    height: 600px;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    &::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+      border-radius: 5px;
+      -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+      background: rgba(0,0,0,0.2);
+    }
+    &::-webkit-scrollbar-track {/*滚动条里面轨道*/
+      -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+      border-radius: 0;
+      background: rgba(0,0,0,0.1);
+    }
+  }
+  .ant-btn-danger {
+    margin-right: 50px;
+  }
+}
+
+.ant-confirm-body-wrapper .ant-confirm-body {
+  .ant-confirm-title {
+    font-size: 16px;
+  }
+  .ant-confirm-content {
+    margin-top: 30px;
+  }
+}
+
+.ant-table-body td.logo .logoImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 2px;
+  overflow: hidden;
+  img {
+    width: 100%;
+  }
+}
+
+.noSeen {
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  margin-left: 10px;
+  text-align: center;
+  line-height: 19px;
+  color: #eee;
+  font-size: 14px;
+  background: -webkit-linear-gradient(#b1b1b1, #6f6f6f);
+  border: 2px solid #656565;
+  font-weight: bold;
+  cursor: pointer;
+  &.red {
+    background: -webkit-linear-gradient(red, #a21212);
+    border: 2px solid #860808;
+  }
+  &.green {
+    background: -webkit-linear-gradient(#3fca25, #134c0f);
+    border: 2px solid #09400a;
+  }
+  &.blue {
+    background: -webkit-linear-gradient(#20a0ff, #142f92);
+    border: 2px solid #0b338a;
+  }
+  &.yellow {
+    background: -webkit-linear-gradient(#ceda12, #ff7600);
+    border: 2px solid #eaa019;
+  }
+}

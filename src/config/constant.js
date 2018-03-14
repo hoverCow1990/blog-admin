@@ -1,15 +1,29 @@
-const ENV = 'dev'
+const ENV = process.env.NODE_ENV
 
 const HOST = {
-  dev: '/proxy/devApi/',
-  pro: 'http://web-jackiee.com/'
+  development: '/proxy/devApi/',
+  production: 'http://www.web-jackiee.com/'
+}
+
+const HOME = {
+  development: 'http://localhost:3000',
+  production: 'http://www.web-jackiee.com'
+}
+
+const SERVERS = {
+  development: 'http://localhost:3001',
+  production: 'http://www.web-jackiee.com'
 }
 
 const HostUrl = HOST[ENV]
+const HOMEPAGE = HOME[ENV]
+const SERVERSPAGE = SERVERS[ENV]
 
 const $Constant = {
   URL: {
-    homePage: 'http://localhost:3000'
+    homePage: HOMEPAGE,
+    serversPage: SERVERSPAGE,
+    devHomePage: 'http://localhost:8080/#/',
   },
   TEMPLATE: {
     perviewer: `
@@ -39,19 +53,26 @@ const $Constant = {
   },
   API: {
     user: {
-      login: HostUrl + 'backUser/login'
+      login: HostUrl + 'admin/login',
+      checkLogin: HostUrl + 'admin/checkLogin',
+      doDbs: HostUrl + 'admin/doDbs'
     },
     category: {
-      getList: HostUrl + 'backCategory/getList',
-      addCategory: HostUrl + 'backCategory/addCategory'
+      getList: HostUrl + 'category/getList',
+      addCategory: HostUrl + 'category/addCategory'
     },
     artcle: {
-      getArticleList: HostUrl + 'backArticle/getArticleList',
-      searchArtcleList: HostUrl + 'backArticle/searchArtcleList',
-      uploadImg: HostUrl + 'backArticle/uploadImg',
-      upLoadArticle: HostUrl + 'backArticle/upLoadArticle',
-      getArticle: HostUrl + 'backArticle/getArticle',
-      deleteArticle: HostUrl + 'backArticle/deleteArticle'
+      getArticleList: HostUrl + 'article/getArticleList',
+      searchArtcleList: HostUrl + 'article/searchArticleList',
+      uploadImg: HostUrl + 'article/uploadImg',
+      upLoadArticle: HostUrl + 'article/uploadArticle',
+      getArticle: HostUrl + 'article/getArticle',
+      deleteArticle: HostUrl + 'article/deleteArticle'
+    },
+    notices: {
+      getNoticesList: HostUrl + 'notice/getNoticesList',
+      seenNotice: HostUrl + 'notice/seenNotice',
+      deleteNotice: HostUrl + 'notice/deleteNotice'
     }
   }
 }

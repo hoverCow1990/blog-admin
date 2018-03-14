@@ -17,6 +17,42 @@ class CowSelectBox extends Component {
       inItSwitch: false // value只初始化一次
     }
   }
+  render () {
+    let { isFoucse, secondTitle } = this.state
+    let selectBox = this.renderSelectCategory()
+    return (
+      <div className="cowSelectBox">
+        <Input placeholder="Basic usage" onFocus = {(e) => this.handlerDropDown(e, true)} value={secondTitle.join(' / ')}/>
+        <Icon type="down" className={isFoucse ? "down" : ""} onClick = {(e) => this.handlerDropDown(e)}/>
+        <div className={isFoucse ? "selectBox down" : "selectBox"}>
+          <ul className="select-category">
+            {selectBox}
+          </ul>
+        </div>
+      </div>
+    )
+  }
+  // 渲染顶级type
+  renderSelectCategory () {
+    const { categoryList, value } = this.props
+    return categoryList.map(category => (
+      <li className="category-context" key={category.id}>
+        <div className="top-type"><Checkbox onChange={(e) => this.onChangeSelect(e, {id:category.id, title:category.title})} checked={value.indexOf(category.id) > -1}>{ category.title }</Checkbox></div>
+        <ul className="type-context">
+          {this.renderSelectType(category.childrens, value)}
+        </ul>
+      </li>
+    ))
+  }
+  // 渲染二级type
+  renderSelectType (childrens, value) {
+    if (childrens instanceof Array) {
+      return childrens.map(item => (
+        <li key={item.id}>
+          <Checkbox onChange={(e) => this.onChangeSelect(e, {id:item.id, title:item.title})}  checked={value.indexOf(item.id) > -1}>{ item.title }</Checkbox>
+        </li>))
+    }
+  }
   // 注册点击外层失去焦点后关闭弹窗
   componentDidMount () {
     this.setState({
@@ -51,7 +87,6 @@ class CowSelectBox extends Component {
       for (let j = 0; j < categoryList[i].childrens.length; j++) {
         if (value.indexOf(categoryList[i].childrens[j].id) > -1) {
           arr.push(categoryList[i].childrens[j].title)
-          break
         }
       }
     }
@@ -70,48 +105,12 @@ class CowSelectBox extends Component {
       }
     }
   }
-  render () {
-    let { isFoucse, secondTitle } = this.state
-    let selectBox = this.renderSelectCategory()
-    return (
-      <div className="cowSelectBox">
-        <Input placeholder="Basic usage" onFocus = {(e) => this.handlerDropDown(e, true)} value={secondTitle.join(' / ')}/>
-        <Icon type="down" className={isFoucse ? "down" : ""} onClick = {(e) => this.handlerDropDown(e)}/>
-        <div className={isFoucse ? "selectBox down" : "selectBox"}>
-          <ul className="select-category">
-            {selectBox}
-          </ul>
-        </div>
-      </div>
-    )
-  }
   // 处理焦点后下拉 bool为void 0时为点击箭头icon
   handlerDropDown (e, bool) {
     bool = void 0 === bool ? !this.state.isFoucse : bool
     this.setState({
       isFoucse: bool
     })
-  }
-  // 渲染顶级type
-  renderSelectCategory () {
-    const { categoryList, value } = this.props
-    return categoryList.map(category => (
-      <li className="category-context" key={category.id}>
-        <div className="top-type"><Checkbox onChange={(e) => this.onChangeSelect(e, {id:category.id, title:category.title})} checked={value.indexOf(category.id) > -1}>{ category.title }</Checkbox></div>
-        <ul className="type-context">
-          {this.renderSelectType(category.childrens, value)}
-        </ul>
-      </li>
-    ))
-  }
-  // 渲染二级type
-  renderSelectType (childrens, value) {
-    if (childrens instanceof Array) {
-      return childrens.map(item => (
-        <li key={item.id}>
-          <Checkbox onChange={(e) => this.onChangeSelect(e, {id:item.id, title:item.title})}  checked={value.indexOf(item.id) > -1}>{ item.title }</Checkbox>
-        </li>))
-    }
   }
   // 改变需求的时候
   onChangeSelect (e, {id, title}) {

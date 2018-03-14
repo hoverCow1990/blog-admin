@@ -55,9 +55,9 @@ class ArticleList extends Component {
               />
               <Select defaultValue="0" style={{ width: 120 }} onChange={type => this.handleTypeChange(type)}>
                 <Option value="0">all</Option>
-                <Option value="1">javascript</Option>
-                <Option value="2">html/css</Option>
-                <Option value="3">node/java</Option>
+                <Option value="1">html / css</Option>
+                <Option value="2">javascript</Option>
+                <Option value="3">node / java</Option>
                 <Option value="4">others</Option>
               </Select>
             </div>
@@ -66,9 +66,9 @@ class ArticleList extends Component {
             <div className="main-hd">
               <div className="hd-id">Id</div>
               <div className="hd-title">标题</div>
+              <div className="hd-type">种类</div>
               <div className="hd-update">更新时间</div>
-              <div className="hd-watch">点击</div>
-              <div className="hd-message">评论</div>
+              <div className="hd-watch">查阅</div>
               <div className="hd-control">操作</div>
             </div>
             <ul className="article-list">
@@ -89,9 +89,9 @@ class ArticleList extends Component {
       <li key={item.id}>
         <div className="article-id">{item.id}</div>
         <div className="article-title">{item.title}</div>
+        <div className="article-type">{item.mainType}</div>
         <div className="article-update">{item.time}</div>
         <div className="article-watch">{item.watch}</div>
-        <div className="article-message">{item.message}</div>
         <div className="article-control">
           <div className="control-btn" onClick={() => this.linkToArticle(item.id)}>
             <img src={require("./images/3.png")} alt="" />
@@ -123,19 +123,24 @@ class ArticleList extends Component {
   }
   // 设置文章列表
   setArticleList (res) {
-    let articleList = res.articleList.map(item => {
-      return {
-        id: item.id,
-        title: item.title,
-        message: this.$Lib.transMsgLength(item.message),
-        watch: item.watch,
-        time: this.$Lib.transTime(item.time)
-      }
-    })
-    this.setState({
-      articleList,
-      allArticleLength: res.allLength
-    })
+    if (res.statue) {
+      let articleList = res.articleList.map(item => {
+        return {
+          id: item.id,
+          title: item.title,
+          mainType: item.mainType,
+          watch: item.watch,
+          time: item.time
+        }
+      })
+      this.setState({
+        articleList,
+        allArticleLength: res.allLength
+      })
+    } else {
+      message.error(res.msg)
+    }
+
   }
   // 根据页面高度设置显示的每页的条数
   setDefaultPageSize () {
@@ -220,7 +225,7 @@ class ArticleList extends Component {
         st,
         end: defaultPageSize,
         keyWords: searchVal,
-        type: this.state.nowArticleType
+        type: nowArticleType
       }
     }).then(res => {
       this.setArticleList(res)
@@ -238,8 +243,8 @@ class ArticleList extends Component {
       this.requestArticleList(index * this.state.defaultPageSize, nowArticleType)
     }
   }
-  linkToView () {
-    window.location.href = ''
+  linkToView (id) {
+    window.open(this.$Constant.URL.devHomePage + 'article/' + id)
   }
 }
 

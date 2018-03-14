@@ -11,8 +11,9 @@ import SideNavView from '@/views/sideNav/sideNav'
 import ArticleListView from '@/views/articleList/articleList'
 import ArticleView from '@/views/article/article'
 import ArticleSuccessView from '@/views/articleSuccess/articleSuccess'
-import MessageBoard from '@/views/messageBoard/messageBoard'
+import NoticesBoard from '@/views/noticesBoard/noticesBoard'
 import MessageArticle from '@/views/messageArticle/messageArticle'
+import Dbs from '@/views/dbs/dbs'
 import Member from '@/views/member/member'
 
 const history = createHashHistory()
@@ -29,8 +30,9 @@ class MainRouter extends Component {
             <CowRoute path="/main/articleList"  component={ArticleListView}/>
             <CowRoute path="/main/article"  component={ArticleView}/>
             <CowRoute path="/main/articleSuccess"  component={ArticleSuccessView}/>
-            <CowRoute path="/main/messageBoard"  component={MessageBoard}/>
+            <CowRoute path="/main/noticesBoard"  component={NoticesBoard}/>
             <CowRoute path="/main/messageArticle"  component={MessageArticle}/>
+            <CowRoute path="/main/dbs"  component={Dbs}/>
             <CowRoute path="/main/member"  component={Member}/>
           </div>
         </Router>

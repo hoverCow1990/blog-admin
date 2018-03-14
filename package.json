@@ -2,11 +2,15 @@
   "name": "my-admin",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/back",
   "dependencies": {
     "antd": "^2.11.2",
     "axios": "^0.16.2",
+    "core-decorators": "^0.20.0",
     "react": "^15.6.1",
+    "react-addons-pure-render-mixin": "^15.6.2",
     "react-dom": "^15.6.1",
+    "react-mixin": "^2.0.2",
     "react-redux": "^5.0.5",
     "react-router": "^4.1.1",
     "redux": "^3.7.1",
@@ -26,8 +30,8 @@
     "style-loader": "^0.18.2"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "set NODE_ENV=development&&react-scripts start",
+    "build": "set NODE_ENV=production&&react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },

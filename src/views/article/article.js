@@ -118,7 +118,7 @@ class Article extends Component {
       const search = this.props.history.location.search
       const id = search.match(/=(\d+)$/)[1]
       this.setState({
-        categoryList: res
+        categoryList: res.categoryList
       })
       this.initialState(id) // 请求文章
     })
@@ -146,20 +146,16 @@ class Article extends Component {
   }
   // 查询旧文章后的初始化
   initialArtcle (res) {
-    let {title, weight, mainType, keyWords, description, smallPerviewer, secondType, context, perviewerContext} = res
-    keyWords = keyWords.substring(1, keyWords.length - 1 )
-    secondType = secondType.substring(1, secondType.length - 1).split(',').map(item => Number(item))
-    mainType = this.state.categoryList.find(item => item.id === mainType).title
+    if (!res.statue) {
+      message.error('获取文章失败')
+      return
+    }
+    let { context, perviewerContext, articleInner } = res.article
+    articleInner.mainType = this.state.categoryList.find(item => item.id === articleInner.mainType).title
+    articleInner.keyWords = articleInner.keyWords.join(',')
+
     this.setState({
-      articleInner: {
-        title,
-        weight,
-        mainType,
-        keyWords,
-        description,
-        smallPerviewer,
-        secondType
-      },
+      articleInner,
       initContext: {
         context,
         perviewerContext
@@ -197,17 +193,19 @@ class Article extends Component {
   updataArticle () {
     const search = this.props.history.location.search
     const id = search.match(/=(\d+)$/)[1]
-    const {articleInner} = this.state
+    const articleInner = this.state.articleInner
     let cowEditorState = this.refs.cowEditor.state
     // let perviewer = cowEditorState.perviewerContext && id === '0' ? '<div class="article-perviewer">' + cowEditorState.perviewerContext + '</div>' : cowEditorState.perviewerContext
     let perviewerContext = cowEditorState.perviewerContext || ''
     let mainContext = cowEditorState.mainContext || ''
     // let context = perviewer + mainContext
     let isCanSubmit = this.validateVal(articleInner)
+    let keyWords = articleInner.keyWords ? articleInner.keyWords.split(',') : []
     let articleInnerData = Object.assign({}, articleInner, {
-      keyWords: ',' + articleInner.keyWords + ',',
+      keyWords,
       mainType: Number.isNaN(Number(articleInner.mainType)) ? this.state.categoryList.find(item => item.title === articleInner.mainType).id : articleInner.mainType
     })
+
     if (isCanSubmit.statue) {
       this.$Http({
         url: this.$Constant.API.artcle.upLoadArticle,
@@ -215,8 +213,8 @@ class Article extends Component {
         data: {
           id,
           articleInner: articleInnerData,
-          perviewerContext: perviewerContext.replace(/("|')/g, ($0, $1) => "\\" + $1),
-          context: mainContext.replace(/("|')/g, ($0, $1) => "\\" + $1)
+          perviewerContext: perviewerContext, // perviewerContext.replace(/("|')/g, ($0, $1) => "\\" + $1)
+          context: mainContext // mainContext.replace(/("|')/g, ($0, $1) => "\\" + $1)
         }
       }).then(res => {
          if (res.statue) {

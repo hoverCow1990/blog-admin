@@ -7,6 +7,8 @@ import {
   Checkbox,
   message
 } from 'antd'
+import reactMixin from 'react-mixin'
+import Mixins from '@/servies/mixins.js'
 import './login.less'
 
 const FormItem = Form.Item;
@@ -39,7 +41,7 @@ class NormalLoginForm extends React.Component {
       }
     }).then(res => {
       if (res.statue) {
-        message.success(`登陆成功`)
+        message.success('登陆成功')
         if (remember) {
           this.$Cookies.setCookie('userName', userName, 2592000)
         } else {
@@ -48,13 +50,17 @@ class NormalLoginForm extends React.Component {
         this.setState({
           isRequsetLogin: false
         })
-        this.props.linkToCateGory()
+        this.props.linkToArticleList()
       } else {
         this.setState({
           isRequsetLogin: false
         })
         message.error(res.msg)
       }
+    }).catch((err) => {
+      this.setState({
+        isRequsetLogin: false
+      })
     })
   }
   render() {
@@ -106,6 +112,7 @@ class Login extends Component {
     }
   }
   componentWillMount () {
+    this.checkLogin()
     this.setInitizalUser()
   }
   render () {
@@ -114,7 +121,7 @@ class Login extends Component {
       <div id="login-view">
         <div className="login-masker"></div>
         <div className="login-container">
-          <LoginForm oldNumber={oldNumber} linkToCateGory={() => this.linkToCateGory()}/>
+          <LoginForm oldNumber={oldNumber} linkToArticleList={() => this.linkToArticleList()}/>
         </div>
       </div>
     )
@@ -128,10 +135,10 @@ class Login extends Component {
       })
     }
   }
-  // 链接至
-  linkToCateGory () {
-    this.props.history.push('/main/category')
+  // 链接至文章列表页
+  linkToArticleList () {
+    this.props.history.push('/main/articleList')
   }
 }
 
-export default Login;
+export default reactMixin.onClass(Login, Mixins)

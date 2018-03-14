@@ -37,7 +37,7 @@ class Category extends Component {
           </div>
         </div>
         <div className="category-bd">
-          <Collapse accordion defaultActiveKey={['1']} onChange={(key) => this.changeCategory(key)}>
+          <Collapse accordion>
             {PanelList}
           </Collapse>
           <div className="category-perview">
@@ -71,9 +71,13 @@ class Category extends Component {
       url: this.$Constant.API.category.getList,
       method: 'GET'
     }).then(res => {
-      this.setState({
-        categoryList: res
-      })
+      if (res.statue) {
+        this.setState({
+          categoryList: res.categoryList
+        })
+      }
+    }).catch((err) => {
+      console.log(err)
     })
   }
   // 顶级菜单的渲染
@@ -85,7 +89,7 @@ class Category extends Component {
           {renderListDetail(item.childrens)}
         </ul>
         <div className="btn-group addItem">
-          <Button type="primary"  onClick={() => this.showAlert(item.id)}><Icon type="plus-circle-o" />二级栏目</Button>
+          <Button type="primary"  onClick={() => this.showAlert(item.title)}><Icon type="plus-circle-o" />二级栏目</Button>
         </div>
       </Panel>
     ))
@@ -104,9 +108,18 @@ class Category extends Component {
   }
   // 显示alert
   showAlert (type) {
-    let alertTitle = type ? '添加二级栏目' : '添加顶级栏目'
+    let alertTitle
+    let nowCategory
+    if (type) {
+      alertTitle = '添加二级栏目'
+      nowCategory = type
+    } else {
+      alertTitle = '添加顶级栏目'
+      nowCategory = ''
+    }
     this.setState({
       alertTitle,
+      nowCategory,
       alertType: type,
       alertVisible: true
     })
@@ -129,8 +142,7 @@ class Category extends Component {
       isSubmitLoding: true
     })
     let {addItemVal, nowCategory} = this.state
-    nowCategory = Number(nowCategory)
-    if (!addItemVal | /^\d+$/.test(addItemVal)) {
+    if (!addItemVal || /^\d+$/.test(addItemVal)) {
       this.setState({
         inputVerify: false
       })
@@ -144,37 +156,35 @@ class Category extends Component {
         method: 'POST',
         data: {
           title: addItemVal,
-          perId: nowCategory
+          par: nowCategory
         }
       }).then(res => {
-        let {categoryList} = this.state
-        let perItem = categoryList.find(item => item.id === nowCategory)
-        perItem.childrens.push({
-          title: addItemVal,
-          perId: this.state.nowCategory,
-          id: res.id,
-          artcleNum: 0
-        })
+        // let perItem = categoryList.find(item => item.id === nowCategory)
+        // perItem.childrens.push({
+        //   title: addItemVal,
+        //   perId: this.state.nowCategory,
+        //   id: res.id,
+        //   artcleNum: 0
+        // })
         if (res.statue) {
           this.setState({
             alertVisible: false,
             addItemVal: '',
-            categoryList,
+            categoryList: res.categoryList,
             isSubmitLoding: false
           })
           this.refs.addValInput.refs.input.value = ''
-          message.success(res.msg)
+          message.success('添加成功')
         } else {
           message.error('添加失败')
         }
+      }).catch(() => {
+        message.error('添加失败')
+        this.setState({
+          isSubmitLoding: false
+        })
       })
     }
-  }
-  changeCategory (key) {
-    console.log(this)
-    this.setState({
-      nowCategory: key
-    })
   }
 }
 

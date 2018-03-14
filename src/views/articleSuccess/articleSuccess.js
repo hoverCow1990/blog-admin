@@ -17,8 +17,9 @@ class ArticleSuccess extends Component {
         <div className="articleSuccess-box">
           <img className="feature" src={require('./images/timg.png')} alt="" />
           <div className="btn-group">
-            <Button type="primary" onClick={() => this.linkToEditor()}>继续编辑</Button>
-            <Button type="default" >查看文章</Button>
+            <Button type="primary" onClick={() => this.goLink('edit')}>继续编辑</Button>
+            <Button type="default" onClick={() => this.goLink('list')}>返回列表</Button>
+            <Button type="default" onClick={() => this.goLink('article')}>查看文章</Button>
           </div>
         </div>
       </div>
@@ -34,8 +35,23 @@ class ArticleSuccess extends Component {
       articleId: id
     })
   }
-  linkToEditor () {
-    let link = '/main/article?id=' + this.state.articleId
+  // 跳转地址
+  goLink (type) {
+    let link
+    if (type === 'article') {
+      window.open(this.$Constant.URL.devHomePage + 'article/' + this.state.articleId)
+      return
+    }
+    switch (type) {
+      case 'edit':
+        link = '/main/article?id=' + this.state.articleId
+        break
+      case 'list':
+        link = '/main/articleList'
+        break
+      default:
+        break
+    }
     this.props.history.push(link)
   }
 }
